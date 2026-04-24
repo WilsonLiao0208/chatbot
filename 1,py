@@ -1,0 +1,18 @@
+import pandas as pd
+import jieba
+import matplotlib.pyplot as plt
+
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.decomposition import LatentDirichletAllocation
+
+# ===== 讀 Excel =====
+df = pd.read_excel(r"C:\Users\samli\OneDrive\桌面\LDA\123.xlsx")
+
+# ===== 看欄位（建議先確認）=====
+print(df.columns)
+
+# ===== 分詞（假設欄位還是「節氣」）=====
+df = df[df["Title"].notna()]
+df["斷詞"] = df["Title"].apply(lambda x: " ".join(jieba.cut(str(x))))
+
+print(df.head())

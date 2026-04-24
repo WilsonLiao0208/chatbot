@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>系辦客服</title>
+</head>
+<body>
+
+<h2>系辦客服 </h2>
+
+<div id="chat"></div>
+
+<input id="msg" placeholder="輸入問題">
+<button onclick="send()">送出</button>
+
+<script>
+async function send() {
+  let text = document.getElementById("msg").value;
+
+  let res = await fetch("/chat", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({message: text})
+  });
+
+  let data = await res.json();
+
+  let chat = document.getElementById("chat");
+
+  chat.innerHTML += "<p>你: " + text + "</p>";
+  chat.innerHTML += "<p>🤖: " + data.reply + "</p>";
+
+  // 顯示圖片（對應你Python的 image）
+  if (data.image) {
+    chat.innerHTML += `<img src="${data.image}" width="300">`;
+  }
+}
+</script>
+
+</body>
+</html>
