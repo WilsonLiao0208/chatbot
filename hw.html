@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>廖偉翔 Wilson | 個人作品集</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #050918;
+      --primary: #1A237E;
+      --accent: #60a5fa;
+      --accent2: #a78bfa;
+      --accent3: #f472b6;
+      --text: #e2e8f0;
+      --text-dim: #94a3b8;
+      --card-bg: rgba(255,255,255,0.04);
+      --card-border: rgba(255,255,255,0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Microsoft JhengHei", "Segoe UI", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== PARTICLE CANVAS ===== */
+    #particleCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ===== NAV ===== */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 64px;
+      height: 70px;
+      background: rgba(5,9,24,0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(96,165,250,0.1);
+    }
+
+    .nav-logo {
+      font-size: 1.35rem;
+      font-weight: 900;
+      letter-spacing: 4px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.88rem;
+      letter-spacing: 1px;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0; right: 0;
+      height: 1.5px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.25s;
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+
+    .nav-cta {
+      padding: 9px 22px;
+      border-radius: 50px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #050918;
+      font-size: 0.85rem;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.2s;
+      text-decoration: none;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(96,165,250,0.4);
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 100px 64px 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Mesh gradient blobs */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      animation: blobFloat 10s ease-in-out infinite;
+    }
+
+    .blob-1 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(26,35,126,0.6), transparent 70%);
+      top: -150px; left: -150px;
+      animation-duration: 12s;
+    }
+
+    .blob-2 {
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, rgba(167,139,250,0.25), transparent 70%);
+      top: 20%; right: 0;
+      animation-duration: 8s;
+      animation-delay: -4s;
+    }
+
+    .blob-3 {
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, rgba(244,114,182,0.18), transparent 70%);
+      bottom: 5%; left: 35%;
+      animation-duration: 9s;
+      animation-delay: -6s;
+    }
+
+    .blob-4 {
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(96,165,250,0.2), transparent 70%);
+      bottom: 20%; right: 15%;
+      animation-duration: 7s;
+      animation-delay: -2s;
+    }
+
+    @keyframes blobFloat {
+      0%, 100% { transform: translate(0,0) scale(1); }
+      33%  { transform: translate(20px,-20px) scale(1.04); }
+      66%  { transform: translate(-15px,15px) scale(0.97); }
+    }
+
+    /* Hero Left */
+    .hero-left {
+      position: relative;
+      z-index: 1;
+      animation: fadeUp 0.9s ease both;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 18px;
+      border-radius: 50px;
+      background: rgba(96,165,250,0.08);
+      border: 1px solid rgba(96,165,250,0.25);
+      font-size: 0.78rem;
+      color: var(--accent);
+      margin-bottom: 30px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .badge-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: pulseDot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.6); }
+      50% { box-shadow: 0 0 0 7px rgba(34,197,94,0); }
+    }
+
+    .hero-greeting {
+      font-size: 1.1rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    .hero-name {
+      font-size: clamp(3rem, 5.5vw, 5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      margin-bottom: 6px;
+      letter-spacing: -2px;
+    }
+
+    .hero-name .cn {
+      background: linear-gradient(135deg, #ffffff 0%, var(--accent) 50%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-name .en {
+      font-size: 0.55em;
+      letter-spacing: 4px;
+      font-weight: 400;
+      color: var(--text-dim);
+      display: block;
+      margin-top: 6px;
+      -webkit-text-fill-color: var(--text-dim);
+    }
+
+    /* Typewriter */
+    .hero-typewriter {
+      font-size: 1.2rem;
+      color: var(--text-dim);
+      margin-bottom: 24px;
+      min-height: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    .typewriter-text {
+      color: var(--accent2);
+      font-weight: 700;
+    }
+
+    .typewriter-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.2em;
+      background: var(--accent2);
+      margin-left: 2px;
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    .hero-desc {
+      font-size: 0.98rem;
+      color: var(--text-dim);
+      line-height: 1.9;
+      max-width: 480px;
+      margin-bottom: 36px;
+    }
+
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 36px;
+    }
+
+    .skill-tag {
+      padding: 6px 16px;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-dim);
+      transition: 0.25s;
+      cursor: default;
+    }
+
+    .skill-tag:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(96,165,250,0.08);
+      transform: translateY(-2px);
+    }
+
+    .cta-group {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 52px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      padding: 14px 34px;
+      border-radius: 50px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #050918;
+      font-size: 0.95rem;
+      font-weight: 900;
+      border: none;
+      cursor: pointer;
+      transition: 0.25s;
+      text-decoration: none;
+      display: inline-block;
+      letter-spacing: 0.5px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--accent2), var(--accent3));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .btn-primary:hover::before { opacity: 1; }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 28px rgba(96,165,250,0.4);
+    }
+
+    .btn-primary span { position: relative; z-index: 1; }
+
+    .btn-outline {
+      padding: 14px 34px;
+      border-radius: 50px;
+      background: transparent;
+      border: 1.5px solid rgba(255,255,255,0.15);
+      color: var(--text);
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.25s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent2);
+      color: var(--accent2);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(167,139,250,0.2);
+    }
+
+    .stats {
+      display: flex;
+      gap: 44px;
+    }
+
+    .stat-item { text-align: left; }
+
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-num.blue { background: linear-gradient(135deg, var(--accent), #93c5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .stat-num.purple { background: linear-gradient(135deg, var(--accent2), var(--accent3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .stat-num.pink { background: linear-gradient(135deg, var(--accent3), #fb923c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    .stat-label { font-size: 0.76rem; color: var(--text-dim); letter-spacing: 0.5px; }
+
+    .stat-divider { width: 1px; background: var(--card-border); align-self: stretch; }
+
+    /* Hero Right - Cards */
+    .hero-right {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      animation: fadeUp 0.9s ease 0.25s both;
+      padding-left: 20px;
+    }
+
+    .project-card {
+      width: 100%;
+      max-width: 350px;
+      padding: 22px 24px;
+      border-radius: 22px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(16px);
+      transition: 0.35s cubic-bezier(.22,.68,0,1.2);
+      animation: floatCard 6s ease-in-out infinite;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      border-radius: 22px 22px 0 0;
+    }
+
+    .project-card.c-blue::before { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+    .project-card.c-purple::before { background: linear-gradient(90deg, var(--accent2), var(--accent3)); }
+    .project-card.c-green::before { background: linear-gradient(90deg, #22c55e, #06b6d4); }
+
+    .project-card:nth-child(2) { animation-delay: -2s; margin-left: 44px; }
+    .project-card:nth-child(3) { animation-delay: -4s; }
+
+    @keyframes floatCard {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .project-card:hover {
+      transform: translateY(-8px) scale(1.02) !important;
+      border-color: rgba(96,165,250,0.25);
+      background: rgba(255,255,255,0.07);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    }
+
+    .card-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 14px;
+    }
+
+    .card-icon-blue { background: rgba(96,165,250,0.12); }
+    .card-icon-purple { background: rgba(167,139,250,0.12); }
+    .card-icon-green { background: rgba(34,197,94,0.12); }
+
+    .card-title { font-size: 0.93rem; font-weight: 700; margin-bottom: 6px; }
+    .card-desc { font-size: 0.78rem; color: var(--text-dim); line-height: 1.65; margin-bottom: 14px; }
+
+    .card-tech { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .tech-chip {
+      font-size: 0.68rem;
+      padding: 3px 10px;
+      border-radius: 50px;
+      background: rgba(96,165,250,0.08);
+      color: var(--accent);
+      border: 1px solid rgba(96,165,250,0.18);
+    }
+
+    /* ===== SCROLL INDICATOR ===== */
+    .scroll-hint {
+      position: absolute;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dim);
+      font-size: 0.72rem;
+      letter-spacing: 2px;
+      animation: fadeUp 1s ease 1.2s both;
+      z-index: 1;
+    }
+
+    .scroll-wheel {
+      width: 22px; height: 36px;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      border-radius: 11px;
+      display: flex;
+      justify-content: center;
+      padding-top: 6px;
+    }
+
+    .scroll-dot {
+      width: 3px; height: 6px;
+      border-radius: 2px;
+      background: var(--accent);
+      animation: scrollDot 1.8s ease infinite;
+    }
+
+    @keyframes scrollDot {
+      0% { transform: translateY(0); opacity: 1; }
+      80% { transform: translateY(10px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 0; }
+    }
+
+    /* ===== SECTIONS ===== */
+    .section-wrapper {
+      position: relative;
+      z-index: 1;
+    }
+
+    section {
+      padding: 100px 64px;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: bold;
+      letter-spacing: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: clamp(1.9rem, 3vw, 2.7rem);
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+
+    .divider {
+      width: 56px; height: 3px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+      margin-bottom: 20px;
+    }
+
+    .section-sub {
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      line-height: 1.85;
+      max-width: 560px;
+      margin-bottom: 56px;
+    }
+
+    /* ===== ABOUT ===== */
+    .about-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+
+    .about-left { display: flex; flex-direction: column; align-items: center; gap: 28px; }
+
+    .about-avatar-wrap {
+      position: relative;
+    }
+
+    .about-avatar {
+      width: 180px; height: 180px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(26,35,126,0.7), rgba(167,139,250,0.4));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4.5rem;
+      border: 1px solid rgba(96,165,250,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about-avatar::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(96,165,250,0.1), rgba(167,139,250,0.1));
+    }
+
+    .avatar-glow {
+      position: absolute;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(96,165,250,0.15), transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation: avatarPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes avatarPulse {
+      0%, 100% { transform: translate(-50%,-50%) scale(1); opacity: 0.6; }
+      50% { transform: translate(-50%,-50%) scale(1.2); opacity: 1; }
+    }
+
+    .about-stats { display: flex; flex-direction: column; gap: 10px; }
+
+    .about-stat {
+      text-align: center;
+      padding: 14px 24px;
+      border-radius: 14px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+    }
+
+    .about-stat-num {
+      font-size: 1.6rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .about-stat-label { font-size: 0.72rem; color: var(--text-dim); }
+
+    .about-info { display: flex; flex-direction: column; gap: 14px; }
+
+    .info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 20px;
+      border-radius: 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      transition: 0.25s;
+    }
+
+    .info-row:hover {
+      border-color: rgba(96,165,250,0.2);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .info-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+    .info-text { font-size: 0.87rem; line-height: 1.65; color: var(--text-dim); }
+    .info-text strong { color: var(--text); font-weight: 700; display: block; margin-bottom: 2px; }
+
+    /* ===== SKILLS ===== */
+    .skills-bg {
+      background: linear-gradient(180deg, rgba(26,35,126,0.08) 0%, rgba(167,139,250,0.04) 100%);
+      border-top: 1px solid var(--card-border);
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 22px;
+    }
+
+    .skill-card {
+      padding: 28px;
+      border-radius: 22px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      transition: 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .skill-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .skill-card.s-blue::after { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+    .skill-card.s-purple::after { background: linear-gradient(90deg, var(--accent2), var(--accent3)); }
+    .skill-card.s-green::after { background: linear-gradient(90deg, #22c55e, #06b6d4); }
+    .skill-card.s-orange::after { background: linear-gradient(90deg, #fb923c, var(--accent3)); }
+
+    .skill-card:hover { transform: translateY(-6px); background: rgba(255,255,255,0.06); border-color: rgba(96,165,250,0.2); }
+    .skill-card:hover::after { opacity: 1; }
+
+    .skill-card-icon { font-size: 2rem; margin-bottom: 16px; }
+    .skill-card-title { font-size: 1.02rem; font-weight: 700; margin-bottom: 8px; }
+    .skill-card-desc { font-size: 0.81rem; color: var(--text-dim); line-height: 1.7; }
+
+    .skill-bar-list { margin-top: 18px; display: flex; flex-direction: column; gap: 12px; }
+    .skill-bar-item { display: flex; flex-direction: column; gap: 5px; }
+    .skill-bar-label { display: flex; justify-content: space-between; font-size: 0.76rem; color: var(--text-dim); }
+    .skill-bar-track { height: 5px; border-radius: 10px; background: rgba(255,255,255,0.07); overflow: hidden; }
+    .skill-bar-fill { height: 100%; border-radius: 10px; width: 0; transition: width 1.2s cubic-bezier(.22,.68,0,1); }
+    .fill-blue { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+    .fill-purple { background: linear-gradient(90deg, var(--accent2), var(--accent3)); }
+    .fill-green { background: linear-gradient(90deg, #22c55e, #06b6d4); }
+    .fill-orange { background: linear-gradient(90deg, #fb923c, var(--accent3)); }
+
+    /* ===== PROJECTS ===== */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .project-big-card {
+      padding: 30px;
+      border-radius: 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      transition: 0.35s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-big-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: 24px 24px 0 0;
+    }
+
+    .project-big-card.p-blue::before { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+    .project-big-card.p-purple::before { background: linear-gradient(90deg, var(--accent2), var(--accent3)); }
+    .project-big-card.p-green::before { background: linear-gradient(90deg, #22c55e, #06b6d4); }
+
+    .project-big-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(96,165,250,0.2);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+    }
+
+    .project-big-icon { font-size: 2.2rem; margin-bottom: 18px; }
+    .project-big-title { font-size: 1.05rem; font-weight: 800; margin-bottom: 10px; }
+    .project-big-desc { font-size: 0.83rem; color: var(--text-dim); line-height: 1.75; margin-bottom: 20px; }
+    .project-big-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .tag { font-size: 0.72rem; padding: 4px 12px; border-radius: 50px; border: 1px solid; font-weight: bold; }
+    .tag-blue { background: rgba(96,165,250,0.08); color: var(--accent); border-color: rgba(96,165,250,0.2); }
+    .tag-purple { background: rgba(167,139,250,0.08); color: var(--accent2); border-color: rgba(167,139,250,0.2); }
+    .tag-green { background: rgba(34,197,94,0.08); color: #22c55e; border-color: rgba(34,197,94,0.2); }
+
+    /* ===== CONTACT ===== */
+    .contact-box {
+      text-align: center;
+      padding: 90px 40px;
+      border-radius: 32px;
+      background: linear-gradient(135deg, rgba(26,35,126,0.25) 0%, rgba(167,139,250,0.12) 50%, rgba(244,114,182,0.08) 100%);
+      border: 1px solid rgba(96,165,250,0.12);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-box::before {
+      content: '';
+      position: absolute;
+      top: -80px; left: -80px;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(96,165,250,0.12), transparent);
+      pointer-events: none;
+    }
+
+    .contact-box::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; right: -60px;
+      width: 250px; height: 250px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(167,139,250,0.1), transparent);
+      pointer-events: none;
+    }
+
+    .contact-title {
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      font-weight: 900;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .contact-sub {
+      color: var(--text-dim);
+      margin-bottom: 40px;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      position: relative;
+      z-index: 1;
+    }
+
+    .contact-btns {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 36px;
+      border-top: 1px solid var(--card-border);
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      position: relative;
+      z-index: 1;
+      letter-spacing: 1px;
+    }
+
+    footer span {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: bold;
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(36px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    .delay-1 { transition-delay: 0.15s; }
+    .delay-2 { transition-delay: 0.3s; }
+    .delay-3 { transition-delay: 0.45s; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 960px) {
+      nav { padding: 0 24px; }
+      .nav-links { display: none; }
+      .hero { grid-template-columns: 1fr; padding: 100px 24px 80px; }
+      .hero-right { display: none; }
+      section { padding: 70px 24px; }
+      .about-grid { grid-template-columns: 1fr; }
+      .about-left { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+      .stats { gap: 20px; }
+      .cta-group { flex-direction: column; }
+      .btn-primary, .btn-outline { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PARTICLE CANVAS -->
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">W.LIAO</div>
+    <ul class="nav-links">
+      <li><a href="#about">關於我</a></li>
+      <li><a href="#skills">技術能力</a></li>
+      <li><a href="#projects">作品集</a></li>
+      <li><a href="#contact">聯絡</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">聯絡我</a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero" style="position:relative;">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+
+    <div class="hero-left">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        目前開放合作機會
+      </div>
+
+      <p class="hero-greeting">嗨，你好 👋</p>
+
+      <h1 class="hero-name">
+        <span class="cn">廖 偉 翔</span>
+        <span class="en">LIAO WEI XIANG · WILSON</span>
+      </h1>
+
+      <div class="hero-typewriter">
+        <span class="typewriter-text" id="typeText"></span>
+        <span class="typewriter-cursor"></span>
+      </div>
+
+      <p class="hero-desc">
+        專注於 Machine Learning、深度學習與 AI 應用開發，<br>
+        擅長將複雜數據轉化為實用的商業解決方案，<br>
+        致力於用技術創造真實的價值與影響力。
+      </p>
+
+      <div class="skill-tags">
+        <span class="skill-tag">🐍 Python</span>
+        <span class="skill-tag">🤖 Machine Learning</span>
+        <span class="skill-tag">📊 資料分析</span>
+        <span class="skill-tag">🌐 Flask</span>
+        <span class="skill-tag">✨ AI 應用</span>
+        <span class="skill-tag">🧠 Deep Learning</span>
+      </div>
+
+      <div class="cta-group">
+        <a href="#projects" class="btn-primary"><span>查看作品集 →</span></a>
+        <a href="#contact" class="btn-outline">聯絡我</a>
+      </div>
+
+      <div class="stats">
+        <div class="stat-item">
+          <div class="stat-num blue">3+</div>
+          <div class="stat-label">年學習經驗</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-num purple">10+</div>
+          <div class="stat-label">完成專案</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-num pink">5</div>
+          <div class="stat-label">核心技能</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="project-card c-blue">
+        <div class="card-icon card-icon-blue">🤖</div>
+        <div class="card-title">商智所 AI 助教</div>
+        <div class="card-desc">結合自然語言處理與模糊匹配技術，打造智慧校園問答機器人，輔助學生快速獲取所務資訊。</div>
+        <div class="card-tech">
+          <span class="tech-chip">JavaScript</span>
+          <span class="tech-chip">NLP</span>
+          <span class="tech-chip">HTML/CSS</span>
+        </div>
+      </div>
+
+      <div class="project-card c-purple">
+        <div class="card-icon card-icon-purple">📊</div>
+        <div class="card-title">機器學習分類模型</div>
+        <div class="card-desc">應用 Random Forest 與 Decision Tree 建立高準確率分類器，完成特徵工程、模型評估與優化。</div>
+        <div class="card-tech">
+          <span class="tech-chip">Python</span>
+          <span class="tech-chip">Scikit-learn</span>
+          <span class="tech-chip">Pandas</span>
+        </div>
+      </div>
+
+      <div class="project-card c-green">
+        <div class="card-icon card-icon-green">🔒</div>
+        <div class="card-title">ESP32 智慧門鎖</div>
+        <div class="card-desc">以 ESP32 搭配 RFID 模組，實作嵌入式智慧門禁系統，整合硬體控制與 IoT 通訊。</div>
+        <div class="card-tech">
+          <span class="tech-chip">ESP32</span>
+          <span class="tech-chip">C++</span>
+          <span class="tech-chip">IoT</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <div class="scroll-wheel"><div class="scroll-dot"></div></div>
+      <span>SCROLL</span>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="section-wrapper">
+    <section id="about">
+      <div class="fade-up">
+        <div class="section-label">About Me</div>
+        <h2 class="section-title">關於我</h2>
+        <div class="divider"></div>
+        <p class="section-sub">熱衷於探索 AI 與資料科學的最新發展，並將技術應用於解決真實問題。目前就讀商務智慧與創新研究所，積極參與各類專案累積實戰經驗。</p>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-left fade-up">
+          <div class="about-avatar-wrap">
+            <div class="avatar-glow"></div>
+            <div class="about-avatar">👨‍💻</div>
+          </div>
+          <div class="about-stats">
+            <div class="about-stat">
+              <div class="about-stat-num">3+</div>
+              <div class="about-stat-label">年學習經驗</div>
+            </div>
+            <div class="about-stat">
+              <div class="about-stat-num">10+</div>
+              <div class="about-stat-label">完成專案</div>
+            </div>
+            <div class="about-stat">
+              <div class="about-stat-num">5</div>
+              <div class="about-stat-label">核心技能</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="about-info fade-up delay-1">
+          <div class="info-row">
+            <span class="info-icon">👤</span>
+            <div class="info-text">
+              <strong>姓名</strong>
+              廖偉翔（Wilson Liao）
+            </div>
+          </div>
+          <div class="info-row">
+            <span class="info-icon">🎓</span>
+            <div class="info-text">
+              <strong>就讀學校</strong>
+              致理科技大學 商務智慧與創新研究所
+            </div>
+          </div>
+          <div class="info-row">
+            <span class="info-icon">📍</span>
+            <div class="info-text">
+              <strong>所在地區</strong>
+              台灣・新北市
+            </div>
+          </div>
+          <div class="info-row">
+            <span class="info-icon">💼</span>
+            <div class="info-text">
+              <strong>研究方向</strong>
+              AI 應用開發、機器學習、商業資料分析
+            </div>
+          </div>
+          <div class="info-row">
+            <span class="info-icon">🌟</span>
+            <div class="info-text">
+              <strong>個人特質</strong>
+              自主學習力強、注重細節、熱愛技術創新與跨領域整合
+            </div>
+          </div>
+          <div class="info-row">
+            <span class="info-icon">📧</span>
+            <div class="info-text">
+              <strong>聯絡信箱</strong>
+              samliaogogo@gmail.com
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- SKILLS -->
+  <div class="section-wrapper skills-bg">
+    <section id="skills">
+      <div class="fade-up">
+        <div class="section-label">Skills</div>
+        <h2 class="section-title">技術能力</h2>
+        <div class="divider"></div>
+        <p class="section-sub">持續精進的技術棧，涵蓋資料科學全流程——從資料收集、前處理、模型建立到部署上線。</p>
+      </div>
+
+      <div class="skills-grid">
+        <div class="skill-card s-blue fade-up">
+          <div class="skill-card-icon">🐍</div>
+          <div class="skill-card-title">Python 開發</div>
+          <div class="skill-card-desc">主要程式語言，熟練運用於資料處理、模型訓練及後端 API 開發。</div>
+          <div class="skill-bar-list">
+            <div class="skill-bar-item">
+              <div class="skill-bar-label"><span>Python</span><span>90%</span></div>
+              <div class="skill-bar-track"><div class="skill-bar-fill fill-blue" data-w="90"></div></div>
+            </div>
+            <div class="skill-bar-item">
+              <div class="skill-bar-label"><span>Flask</span><span>75%</span></div>
+              <div class="skill-bar-track"><div class="skill-bar-fill fill-blue" data-w="75"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="skill-card s-purple fade-up delay-1">
+          <div class="skill-card-icon">🤖</div>
+          <div class="skill-card-title">Machine Learning</div>
+          <div class="skill-card-desc">掌握監督式學習、決策樹、隨機森林、KNN 等主流演算法與調參技巧。</div>
+          <div class="skill-bar-list">
+            <div class="skill-bar-item">
+              <div class="skill-bar-label"><span>Scikit-learn</span><span>85%</span></div>
+              <div class="skill-bar-track"><div class="skill-bar-fill fill-purple" data-w="85"></div></div>
+            </div>
+            <div class="skill-bar-item">
+              <div class="skill-bar-label"><span>Deep Learning</span><span>70%</span></div>
+              <div class="skill-bar-track"><div class="skill-bar-fill fill-purple" data-w="70"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="skill-card s-green fade-up delay-2">
+          <div class="skill-card-icon">📊</div>
+          <div class="skill-card-title">資料分析</div>
+          <div class="skill-card-desc">熟悉 Pandas、NumPy 進行資料清洗與前處理，Matplotlib 視覺化呈現洞察。</div>
+          <div class="skill-bar-list">
+            <div class="skill-bar-item">
+              <div class="skill-bar-label"><span>Pandas / NumPy</span><span>88%</span></div>
+              <div class="skill-bar-track"><div class="skill-bar-fill fill-green" data-w="88"></div></div>
+            </div>
+            <div class="skill-bar-item">
+              <div class="skill-bar-label"><span>資料視覺化</span><span>80%</span></div>
+              <div class="skill-bar-track"><div class="skill-bar-fill fill-green" data-w="80"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="skill-card s-orange fade-up delay-3">
+          <div class="skill-card-icon">🌐</div>
+          <div class="skill-card-title">前端開發</div>
+          <div class="skill-card-desc">具備 HTML/CSS/JavaScript 基礎，能獨立打造互動介面與 AI 整合應用。</div>
+          <div class="skill-bar-list">
+            <div class="skill-bar-item">
+              <div class="skill-bar-label"><span>HTML / CSS</span><span>80%</span></div>
+              <div class="skill-bar-track"><div class="skill-bar-fill fill-orange" data-w="80"></div></div>
+            </div>
+            <div class="skill-bar-item">
+              <div class="skill-bar-label"><span>JavaScript</span><span>72%</span></div>
+              <div class="skill-bar-track"><div class="skill-bar-fill fill-orange" data-w="72"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- PROJECTS -->
+  <div class="section-wrapper">
+    <section id="projects">
+      <div class="fade-up">
+        <div class="section-label">Projects</div>
+        <h2 class="section-title">精選作品集</h2>
+        <div class="divider"></div>
+        <p class="section-sub">每個專案都代表一次成長的歷程，從構思、實作到優化，累積解決問題的能力與跨域整合思維。</p>
+      </div>
+
+      <div class="projects-grid">
+        <div class="project-big-card p-blue fade-up" style="position:relative;">
+          <div style="position:absolute;top:20px;right:20px;display:flex;align-items:center;gap:6px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.4);border-radius:50px;padding:4px 12px;">
+            <span style="width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulseDot 2s ease-in-out infinite;"></span>
+            <span style="font-size:0.7rem;font-weight:bold;color:#22c55e;letter-spacing:1px;">LIVE DEMO</span>
+          </div>
+          <div class="project-big-icon">🤖</div>
+          <div class="project-big-title">商智所 AI 助教系統</div>
+          <div class="project-big-desc">完整的校園 AI 問答機器人，整合模糊匹配、多層互動選單、主動提問泡泡等功能，並部署於 rpage CMS 平台，已實際服務在校師生。</div>
+          <div class="project-big-tags" style="margin-bottom:16px;">
+            <span class="tag tag-blue">JavaScript</span>
+            <span class="tag tag-blue">NLP</span>
+            <span class="tag tag-blue">CMS 整合</span>
+            <span class="tag tag-blue">UX 設計</span>
+          </div>
+          <div onclick="openDemo()" style="display:inline-flex;align-items:center;gap:10px;padding:13px 30px;border-radius:50px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#050918;font-size:0.92rem;font-weight:900;cursor:pointer;transition:0.25s;letter-spacing:0.5px;box-shadow:0 6px 24px rgba(96,165,250,0.35);" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 12px 32px rgba(96,165,250,0.5)'" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 24px rgba(96,165,250,0.35)'">
+            🤖 立即試用 Live Demo →
+          </div>
+        </div>
+
+        <div class="project-big-card p-purple fade-up delay-1">
+          <div class="project-big-icon">🌲</div>
+          <div class="project-big-title">機器學習分類器研究</div>
+          <div class="project-big-desc">實作 Decision Tree、Random Forest、KNN 等多種分類演算法，完整進行特徵工程與交叉驗證，記錄於 Jupyter Notebook 並視覺化比較模型效能。</div>
+          <div class="project-big-tags">
+            <span class="tag tag-purple">Python</span>
+            <span class="tag tag-purple">Scikit-learn</span>
+            <span class="tag tag-purple">Jupyter</span>
+            <span class="tag tag-purple">Matplotlib</span>
+          </div>
+        </div>
+
+        <div class="project-big-card p-green fade-up delay-2">
+          <div class="project-big-icon">🔒</div>
+          <div class="project-big-title">ESP32 智慧門鎖系統</div>
+          <div class="project-big-desc">以 ESP32 搭配 RFID 模組實作嵌入式智慧門禁系統，整合硬體控制與 IoT 通訊，展現從嵌入式到雲端的跨領域整合能力。</div>
+          <div class="project-big-tags">
+            <span class="tag tag-green">ESP32</span>
+            <span class="tag tag-green">C++</span>
+            <span class="tag tag-green">IoT</span>
+            <span class="tag tag-green">PlatformIO</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="section-wrapper">
+    <section id="contact">
+      <div class="contact-box fade-up">
+        <h2 class="contact-title">準備好開始合作了嗎？</h2>
+        <p class="contact-sub">無論是 AI 開發、資料分析專案，<br>還是想交流技術心得，歡迎隨時聯繫我！</p>
+        <div class="contact-btns">
+          <a href="mailto:samliaogogo@gmail.com" class="btn-primary"><span>✉️ 寄信給我</span></a>
+          <a href="https://github.com/WilsonLiao0208" target="_blank" class="btn-outline">🐙 GitHub</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 <span>廖偉翔 Wilson Liao</span> · 以 ❤️ 與 ☕ 打造</p>
+  </footer>
+
+  <script>
+    // ===== PARTICLE SYSTEM =====
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let W, H;
+
+    function resize() {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+
+    const COLORS = ['rgba(96,165,250,', 'rgba(167,139,250,', 'rgba(244,114,182,', 'rgba(34,197,94,'];
+
+    class Particle {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * W;
+        this.y = Math.random() * H;
+        this.size = Math.random() * 1.8 + 0.4;
+        this.speedX = (Math.random() - 0.5) * 0.4;
+        this.speedY = (Math.random() - 0.5) * 0.4;
+        this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+        this.alpha = Math.random() * 0.5 + 0.1;
+        this.life = 0;
+        this.maxLife = Math.random() * 300 + 200;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.life++;
+        if (this.life > this.maxLife || this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
+      }
+      draw() {
+        const t = this.life / this.maxLife;
+        const a = this.alpha * (t < 0.1 ? t / 0.1 : t > 0.9 ? (1 - t) / 0.1 : 1);
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color + a + ')';
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < 120; i++) particles.push(new Particle());
+
+    // Connection lines between close particles
+    function drawConnections() {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 100) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(96,165,250,${0.06 * (1 - dist / 100)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, W, H);
+      drawConnections();
+      particles.forEach(p => { p.update(); p.draw(); });
+      requestAnimationFrame(animateParticles);
+    }
+
+    animateParticles();
+
+    // ===== TYPEWRITER =====
+    const roles = [
+      'AI 應用開發者',
+      '資料科學愛好者',
+      '機器學習工程師',
+      '商務智慧研究生',
+      'Full-Stack 探索者',
+    ];
+    let roleIdx = 0, charIdx = 0, deleting = false;
+    const typeEl = document.getElementById('typeText');
+
+    function typeLoop() {
+      const current = roles[roleIdx];
+      if (!deleting) {
+        typeEl.textContent = current.slice(0, ++charIdx);
+        if (charIdx === current.length) { deleting = true; setTimeout(typeLoop, 1800); return; }
+        setTimeout(typeLoop, 90);
+      } else {
+        typeEl.textContent = current.slice(0, --charIdx);
+        if (charIdx === 0) { deleting = false; roleIdx = (roleIdx + 1) % roles.length; setTimeout(typeLoop, 400); return; }
+        setTimeout(typeLoop, 45);
+      }
+    }
+
+    setTimeout(typeLoop, 800);
+
+    // ===== SCROLL FADE IN =====
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // ===== SKILL BARS =====
+    const barObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.querySelectorAll('.skill-bar-fill').forEach(bar => {
+            setTimeout(() => { bar.style.width = bar.dataset.w + '%'; }, 100);
+          });
+          barObserver.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.skill-card').forEach(el => barObserver.observe(el));
+
+    // ===== NAV ACTIVE STATE =====
+    const sections = document.querySelectorAll('section[id]');
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY + 100;
+      sections.forEach(s => {
+        const top = s.offsetTop, bottom = top + s.offsetHeight;
+        const link = document.querySelector(`.nav-links a[href="#${s.id}"]`);
+        if (link) link.style.color = (y >= top && y < bottom) ? 'var(--accent)' : '';
+      });
+    });
+  </script>
+
+
+  <!-- ===== LIVE DEMO: 商智所 AI 助教 ===== -->
+  <!-- 首次進入提示箭頭 -->
+  <div id="demoHint" style="position:fixed;bottom:90px;right:92px;z-index:10002;pointer-events:none;animation:fadeInUp 0.6s ease 1.5s both;display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+    <div style="background:linear-gradient(135deg,#60a5fa,#a78bfa);color:#050918;padding:7px 14px;border-radius:12px;font-size:0.78rem;font-weight:900;white-space:nowrap;letter-spacing:0.5px;font-family:'Microsoft JhengHei',sans-serif;">
+      🤖 點擊試用 AI 助教 Live Demo！
+    </div>
+    <svg width="20" height="16" viewBox="0 0 20 16" style="margin-right:18px;"><path d="M10 16 L2 0 L18 0 Z" fill="#a78bfa"/></svg>
+  </div>
+
+  <style>
+    /* 讓 demoHint 在 3 秒後自動消失 */
+    #demoHint { animation: hintFade 0.5s ease 5s forwards; }
+    @keyframes hintFade { to { opacity: 0; pointer-events: none; } }
+
+    /* ===== chatbot styles from school.html ===== */
+    #chatWindow {
+      position: fixed; bottom: 95px; right: 25px; width: 320px; height: 500px;
+      background: #ffffff; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+      display: none; flex-direction: column; z-index: 9999; border: 1px solid #e0e0e0;
+      font-family: "Microsoft JhengHei", sans-serif; resize: both; overflow: hidden;
+      direction: rtl; transform: scaleY(-1);
+    }
+    #chatWindow > * { direction: ltr; transform: scaleY(-1); }
+    #chatHeader {
+      background: #EAF0F6; color: #000 !important; padding: 15px; font-weight: bold;
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid #d1d9e0; flex-shrink: 0;
+    }
+    #closeBtn { cursor: pointer; font-size: 22px; color: #000 !important; padding: 0 5px; }
+    #chat { flex: 1; padding: 20px; overflow-y: auto; background: #f4f7f9; }
+    #chat a { color: #1A237E !important; text-decoration: underline; font-weight: bold; }
+    .user { text-align: right; margin-bottom: 15px; }
+    .user span { background: #fff; color: #000 !important; padding: 10px 14px; border-radius: 15px 15px 2px 15px; display: inline-block; border: 1.5px solid #1A237E; }
+    .bot { text-align: left; margin-bottom: 15px; }
+    .bot span { background: #fff; color: #000 !important; padding: 10px 14px; border-radius: 15px 15px 15px 2px; display: inline-block; border: 1px solid #ebebeb; line-height: 1.6; cursor: pointer; }
+    .option-btn { display: inline-block; margin: 4px; padding: 8px 16px; border-radius: 50px; background: #fff; color: #000 !important; cursor: pointer; border: 1.5px solid #1A237E; font-size: 0.9em; font-weight: bold; transition: 0.2s; }
+    .option-btn:hover { background: #EAF0F6; }
+    #inputArea { display: flex; padding: 15px; background: white; border-top: 1px solid #eee; flex-shrink: 0; }
+    #msg { flex: 1; padding: 10px 15px; border: 1px solid #ddd; border-radius: 25px; outline: none; margin-right: 8px; color: #000 !important; }
+    #sendBtn { background: #fff; color: #1A237E !important; border: 1.5px solid #1A237E; padding: 0 20px; border-radius: 25px; cursor: pointer; font-weight: bold; }
+    #msg:disabled { background: #f0f0f0; cursor: not-allowed; opacity: 0.6; }
+    #sendBtn:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+    #chatToggle {
+      position: fixed; bottom: 20px; right: 25px; width: 60px; height: 60px;
+      background: #fff; border: 2px solid #1A237E; border-radius: 50%;
+      color: #1A237E; font-size: 28px; display: flex; justify-content: center; align-items: center;
+      cursor: grab; z-index: 9999; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      user-select: none; touch-action: none;
+      animation: chatBtnPop 0.5s cubic-bezier(.22,.68,0,1.4) 1s both;
+    }
+    @keyframes chatBtnPop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    /* 主畫面隱藏浮動元件，只在 modal 內使用 */
+    #chatToggle, #guideBubble, #demoHint, #scrollBtn, #proactiveBubble { display: none !important; }
+    .typing-indicator { display: inline-flex; gap: 3px; padding: 2px 0; }
+    .typing-indicator span { width: 4px; height: 4px; border-radius: 50%; background: #1A237E; display: inline-block; animation: typingBounce 1.4s infinite ease-in-out; }
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingBounce { 0%,60%,100% { opacity:0.3;transform:translateY(0); } 30% { opacity:1;transform:translateY(-6px); } }
+    .msg-time { font-size: 10px; color: #aaa; margin-top: 3px; }
+    .user .msg-time { text-align: right; }
+    .bot .msg-time { text-align: left; margin-left: 4px; }
+    .rating-container { display: flex; gap: 6px; justify-content: center; margin: 12px 0 4px; }
+    .rating-star { font-size: 26px; cursor: pointer; transition: transform 0.2s, filter 0.2s; filter: grayscale(0.8) brightness(0.8); }
+    .rating-star:hover, .rating-star.active { transform: scale(1.3); filter: grayscale(0) brightness(1); }
+    .rating-thanks { text-align: center; color: #1A237E; font-weight: bold; margin-top: 8px; font-size: 13px; animation: fadeInUp 0.4s ease; }
+    @keyframes fadeInUp { from { opacity:0;transform:translateY(8px); } to { opacity:1;transform:translateY(0); } }
+    #quickTags { display: flex; gap: 6px; padding: 8px 12px; overflow-x: auto; background: #fff; border-top: 1px solid #f0f0f0; flex-shrink: 0; scrollbar-width: none; }
+    #quickTags::-webkit-scrollbar { display: none; }
+    .quick-tag { white-space: nowrap; padding: 5px 12px; border-radius: 15px; background: #f0f4ff; color: #1A237E; font-size: 11px; cursor: pointer; border: 1px solid #d0d8f0; transition: 0.2s; font-weight: bold; }
+    .quick-tag:hover { background: #1A237E; color: white; }
+    #guideBubble {
+      position: fixed; bottom: 95px; right: 25px; background: #fff; border: 2px solid #1A237E;
+      border-radius: 20px; padding: 10px 14px; color: #1A237E; font-weight: bold; font-size: 12px;
+      font-family: "Microsoft JhengHei", sans-serif; box-shadow: 0 6px 20px rgba(26,35,126,0.2);
+      z-index: 9998; cursor: pointer; white-space: normal; display: none; line-height: 1.3;
+      max-width: 200px; text-align: center;
+    }
+    #guideBubble::after { content:''; position:absolute; bottom:-10px; right:20px; width:0; height:0; border-left:10px solid transparent; border-right:0 solid transparent; border-top:10px solid #fff; }
+    #charCount { text-align: right; font-size: 10px; color: #bbb; padding: 0 15px 4px; background: white; }
+    #scrollBtn { position:fixed; background:rgba(26,35,126,0.85); color:white; padding:5px 14px; border-radius:15px; font-size:11px; cursor:pointer; display:none; z-index:10000; font-family:"Microsoft JhengHei",sans-serif; transform:translateX(-50%); }
+    #proactiveBubble { position:fixed; background:#1A237E; color:white; padding:12px 14px; border-radius:16px; font-size:12px; font-family:"Microsoft JhengHei",sans-serif; display:none; z-index:10001; box-shadow:0 4px 15px rgba(26,35,126,0.3); max-width:200px; animation:fadeInUp 0.4s ease; }
+    .pb-btn { display:block; margin:6px 0 0; padding:5px 10px; background:white; color:#1A237E; border-radius:10px; cursor:pointer; font-size:11px; font-weight:bold; opacity:0; animation:fadeInUp 0.3s ease forwards; }
+    @media (max-width:768px) {
+      #chatWindow { width:95vw !important; height:80vh !important; bottom:70px !important; right:10px !important; max-width:400px; max-height:600px; }
+      #chatToggle { width:50px !important; height:50px !important; font-size:24px !important; bottom:15px !important; right:15px !important; }
+    }
+  </style>
+
+  <div id="guideBubble">👋 您好！我是 AI 小助手，點我開始諮詢喔！</div>
+  <div id="chatToggle">🤖</div>
+  <div id="proactiveBubble"></div>
+  <div id="scrollBtn">⬇️ 最新訊息</div>
+
+  <div id="chatWindow">
+    <div id="inputArea">
+      <input id="msg" placeholder="試試輸入：老師姓名、論文格式、學分...">
+      <button type="button" id="sendBtn" onclick="send()">送出</button>
+    </div>
+    <div id="charCount">0/500</div>
+    <div id="quickTags">
+      <span class="quick-tag" onclick="ask('師資成員')">👥 師資</span>
+      <span class="quick-tag" onclick="ask('應修科目表')">📚 學分</span>
+      <span class="quick-tag" onclick="ask('研究生專區')">📋 研究生</span>
+      <span class="quick-tag" onclick="ask('論文格式')">📝 論文</span>
+      <span class="quick-tag" onclick="ask('所辦')">📞 聯絡</span>
+      <span class="quick-tag" onclick="ask('學術倫理')">⚖️ 倫理</span>
+    </div>
+    <div id="chat"></div>
+    <div id="chatHeader">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="4" width="18" height="12" rx="3" fill="#000"/><circle cx="7" cy="10" r="1.2" fill="white"/><circle cx="11" cy="10" r="1.2" fill="white"/><circle cx="15" cy="10" r="1.2" fill="white"/><path d="M7 16l1.5 2.5 2.5-2.5" fill="#000" stroke="#000" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-weight:bold;font-size:14px;color:#000;">🎓 商智所 AI 助教</span>
+            <span style="width:7px;height:7px;border-radius:50%;background:#22C55E;display:inline-block;"></span>
+          </div>
+          <div style="font-size:11px;color:#22C55E;font-weight:normal;margin-top:1px;text-align:left;">● 線上中</div>
+        </div>
+      </div>
+      <span onclick="restartChat()" title="重新開始" style="cursor:pointer;font-size:18px;margin-right:6px;">🔄</span>
+      <span id="closeBtn" onclick="confirmClose()">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 2l9 9M11 2l-9 9" stroke="#000" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </span>
+    </div>
+  </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const chat = document.getElementById("chat");
+    const msgInput = document.getElementById("msg");
+    const chatWindow = document.getElementById("chatWindow");
+    const chatToggle = document.getElementById("chatToggle");
+    const guideBubble = document.getElementById("guideBubble");
+    let isDragging=false, startX, startY, moveX=0, moveY=0, mouseDownX=0, mouseDownY=0;
+
+    function hideGuideBubble() { guideBubble.style.display="none"; sessionStorage.setItem("hasSeenGuide","true"); }
+    // 主畫面不自動顯示引導泡泡
+    guideBubble.addEventListener("click",()=>{ hideGuideBubble(); chatWindow.style.display="flex"; msgInput.focus(); if(chat.innerHTML===""){start();} });
+
+    chatToggle.onmousedown=(e)=>{ startX=e.clientX-moveX; startY=e.clientY-moveY; mouseDownX=e.clientX; mouseDownY=e.clientY; isDragging=true; chatToggle.style.cursor="grabbing"; guideBubble.style.display="none"; };
+    document.onmousemove=(e)=>{ if(!isDragging)return; moveX=e.clientX-startX; moveY=e.clientY-startY; chatToggle.style.transform=`translate(${moveX}px,${moveY}px)`; chatWindow.style.transform=`translate(${moveX}px,${moveY}px) scaleY(-1)`; guideBubble.style.transform=`translate(${moveX}px,${moveY}px)`; document.getElementById('proactiveBubble').style.transform=`translate(${moveX}px,${moveY}px)`; };
+    document.onmouseup=(e)=>{ if(!isDragging)return; isDragging=false; chatToggle.style.cursor="grab"; const dx=Math.abs(e.clientX-mouseDownX),dy=Math.abs(e.clientY-mouseDownY); if(dx<5&&dy<5){ const v=chatWindow.style.display==="flex"; chatWindow.style.display=v?"none":"flex"; if(v){document.getElementById('proactiveBubble').style.display='none';} if(!v){msgInput.focus();} if(!v&&chat.innerHTML===""){start();} } else { if(chatWindow.style.display!=="flex"&&!sessionStorage.getItem("hasSeenGuide")){guideBubble.style.transform=`translate(${moveX}px,${moveY}px)`;guideBubble.style.display="block";} } };
+    chatToggle.ontouchstart=(e)=>{ const t=e.touches[0]; startX=t.clientX-moveX; startY=t.clientY-moveY; mouseDownX=t.clientX; mouseDownY=t.clientY; isDragging=true; guideBubble.style.display="none"; e.preventDefault(); };
+    document.ontouchmove=(e)=>{ if(!isDragging)return; const t=e.touches[0]; moveX=t.clientX-startX; moveY=t.clientY-startY; chatToggle.style.transform=`translate(${moveX}px,${moveY}px)`; chatWindow.style.transform=`translate(${moveX}px,${moveY}px) scaleY(-1)`; guideBubble.style.transform=`translate(${moveX}px,${moveY}px)`; document.getElementById('proactiveBubble').style.transform=`translate(${moveX}px,${moveY}px)`; e.preventDefault(); };
+    document.ontouchend=(e)=>{ if(!isDragging)return; isDragging=false; const t=e.changedTouches[0]; const dx=Math.abs(t.clientX-mouseDownX),dy=Math.abs(t.clientY-mouseDownY); if(dx<5&&dy<5){ const v=chatWindow.style.display==="flex"; chatWindow.style.display=v?"none":"flex"; if(v){document.getElementById('proactiveBubble').style.display='none';} if(!v){msgInput.focus();} if(!v&&chat.innerHTML===""){start();} } };
+
+    let isProcessing=false;
+    function getTime(){ return new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}); }
+    function removeOldButtons(){ document.querySelectorAll('.main-menu,.option-group,.year-menu,.faculty-menu,.rating-container,.rating-thanks').forEach(m=>m.remove()); }
+    function escapeHTML(str){ const d=document.createElement('div'); d.textContent=str; return d.innerHTML; }
+    function lockInput(){ msgInput.disabled=true; document.getElementById('sendBtn').disabled=true; }
+    function unlockInput(){ msgInput.disabled=false; document.getElementById('sendBtn').disabled=false; msgInput.focus(); }
+    function bot(text){ const t=getTime(); chat.innerHTML+=`<div class="bot"><span onclick="copyMsg(this)" title="點擊複製">🤖 ${text}</span><div class="msg-time">${t}</div></div>`; chat.scrollTop=chat.scrollHeight; }
+    function user(text){ const t=getTime(); chat.innerHTML+=`<div class="user"><span>${escapeHTML(text)}</span><div class="msg-time">${t}</div></div>`; chat.scrollTop=chat.scrollHeight; }
+    function showTyping(){ const d=document.createElement('div'); d.className='bot'; d.id='typingBubble'; d.innerHTML='<span>🤖 <span class="typing-indicator"><span></span><span></span><span></span></span></span>'; chat.appendChild(d); chat.scrollTop=chat.scrollHeight; }
+    function removeTyping(){ const el=document.getElementById('typingBubble'); if(el)el.remove(); }
+    function respondWithTyping(fn){ if(isProcessing)return; isProcessing=true; lockInput(); showTyping(); setTimeout(()=>{ removeTyping(); fn(); isProcessing=false; }, 500+Math.random()*400); }
+    function fuzzyHas(input,keyword){ if(input.includes(keyword))return true; if(keyword.length<2)return false; for(let i=0;i<=input.length-keyword.length;i++){ const sub=input.substring(i,i+keyword.length); let m=0; for(let j=0;j<keyword.length;j++){if(sub[j]===keyword[j])m++;} if(m>=keyword.length-1&&keyword.length>=3)return true; } return false; }
+    function findSimilarTeacher(input){ if(input.length<2)return null; for(let name in teacherDB){for(let i=0;i<=name.length-2;i++){if(input.includes(name.substring(i,i+2)))return name;}} for(let alias in teacherAliases){if(alias.length<2)continue;for(let i=0;i<=alias.length-2;i++){if(input.includes(alias.substring(i,i+2)))return teacherAliases[alias];}} return null; }
+
+    window.confirmClose=function(){ removeOldButtons(); lockInput(); respondWithTyping(()=>{ bot("在結束之前，請為本次服務評分 😊"); chat.innerHTML+=`<div class="rating-container"><span class="rating-star" onclick="rate(1)">⭐</span><span class="rating-star" onclick="rate(2)">⭐</span><span class="rating-star" onclick="rate(3)">⭐</span><span class="rating-star" onclick="rate(4)">⭐</span><span class="rating-star" onclick="rate(5)">⭐</span></div><div class="option-group" style="margin-top:8px;"><span class="option-btn" onclick="skipRating()">跳過評分</span><span class="option-btn" onclick="continueChat()">繼續對話</span></div>`; chat.scrollTop=chat.scrollHeight; }); };
+    window.rate=function(stars){ removeOldButtons(); document.querySelectorAll('.rating-container').forEach(el=>el.remove()); const labels=['','😢 很不滿意','😕 不太滿意','😐 普通','😊 滿意','🤩 非常滿意']; bot(`感謝您的評分！${labels[stars]}<br>您給了 ${'⭐'.repeat(stars)} (${stars}/5 分)`); chat.innerHTML+=`<div class="rating-thanks">感謝使用商智所 AI 助教！祝您學業順利 🎓</div>`; chat.scrollTop=chat.scrollHeight; setTimeout(()=>{ chatWindow.style.display="none"; chat.innerHTML=""; unlockInput(); sessionStorage.removeItem("hasSeenGuide"); setTimeout(()=>{ guideBubble.style.transform=`translate(${moveX}px,${moveY}px)`; guideBubble.style.display="block"; },500); },2000); };
+    window.skipRating=function(){ removeOldButtons(); document.querySelectorAll('.rating-container').forEach(el=>el.remove()); chatWindow.style.display="none"; chat.innerHTML=""; unlockInput(); sessionStorage.removeItem("hasSeenGuide"); setTimeout(()=>{ guideBubble.style.transform=`translate(${moveX}px,${moveY}px)`; guideBubble.style.display="block"; },500); };
+    window.closeAndClear=function(){ window.skipRating(); };
+    window.continueChat=function(){ removeOldButtons(); document.querySelectorAll('.rating-container').forEach(el=>el.remove()); respondWithTyping(()=>{ bot("好的，我們繼續對話！請問還有什麼我可以幫您的？"); showMainMenu(); }); };
+
+    const teacherDB={'林于正':{title:"助理教授",office:"2F E21",extension:"4111",expertise:"遊戲式數位學習、AI 應用、學習行為分析、虛擬/擴增實境應用",info:"<b>職稱：</b>助理教授<br><b>研究室:</b> 2F E21 | <b>分機:</b> 4111<br><b>研究專長：</b>遊戲式數位學習、AI 應用、學習行為分析、虛擬/擴增實境應用",link:"https://drive.google.com/file/d/1ZN0ZGk2cLN7J3WKS7w74DOy-WMNRRvcC/view?usp=sharing"},'張民忠':{title:"教授",office:"B1 E02-2",extension:"1890",expertise:"永續發展、綠色金融、AI 商務應用、國際貿易與金融",info:"<b>職稱：</b>教授<br><b>研究室:</b> B1 E02-2 | <b>分機:</b> 1890<br><b>研究專長：</b>永續發展、綠色金融、AI 商務應用、國際貿易與金融",link:"https://drive.google.com/file/d/1SmGursG9ry6zzoW3BSBtW50_FtZiir2K/view?usp=sharing"},'游輝城':{title:"副教授",office:"B1 E08-3",extension:"1426",expertise:"環境永續、ESG、企業社會責任、公司治理、財務會計",info:"<b>職稱：</b>副教授<br><b>研究室:</b> B1 E08-3 | <b>分機:</b> 1426<br><b>研究專長：</b>環境永續、ESG、企業社會責任、公司治理、財務會計",link:"https://drive.google.com/file/d/12VNY7GxRFkANXoGGpWPD8im2ixW1Q3x3/view?usp=sharing"},'費聿明':{title:"副教授",office:"7F K713-2",extension:"2761",expertise:"大數據分析、物聯網、AI 影像辨識、碳盤查與減量計畫",info:"<b>職稱：</b>副教授<br><b>研究室:</b> 7F K713-2 | <b>分機:</b> 2761<br><b>研究專長：</b>大數據分析、物聯網、AI 影像辨識、碳盤查與減量計畫",link:"https://drive.google.com/file/d/12IjCFNdRueDfxZYWj9rKauxbX39ner1M/view?usp=sharing"},'張國謙':{title:"教授兼所長",office:"1F K19",extension:"1137 / 1138",expertise:"消費行為、資料探勘、服務品質、服務行銷",info:"<b>職稱：</b>教授兼所長<br><b>研究室:</b> 1F K19 | <b>分機:</b> 1137 / 1138<br><b>研究專長：</b>消費行為、資料探勘、服務品質、服務行銷",link:"https://drive.google.com/file/d/1L6BrInGlgcDd1ThcxelhpDRi3vD-Q1ap/view?usp=sharing"}};
+    const teacherAliases={'于正':'林于正','林老師':'林于正','漁政':'林于正','余正':'林于正','魚政':'林于正','于政':'林于正','魚正':'林于正','民忠':'張民忠','張民忠老師':'張民忠','民宗':'張民忠','民中':'張民忠','敏忠':'張民忠','民衷':'張民忠','輝城':'游輝城','游老師':'游輝城','游輝城老師':'游輝城','灰城':'游輝城','揮城':'游輝城','輝成':'游輝城','惠城':'游輝城','聿明':'費聿明','費老師':'費聿明','費聿明老師':'費聿明','玉明':'費聿明','預明':'費聿明','裕明':'費聿明','育明':'費聿明','語明':'費聿明','國謙':'張國謙','國謙老師':'張國謙','張國謙老師':'張國謙','所長':'張國謙','國乾':'張國謙','國前':'張國謙','國千':'張國謙','過謙':'張國謙'};
+
+    function handle(text){ const input=text.toLowerCase(); removeOldButtons();
+      if(input.includes("你好")||input.includes("您好")||input.includes("hi")||input.includes("hello")||input.includes("哈囉")||input.includes("嗨")){ respondWithTyping(()=>{ bot("同學您好！😊 很高興為您服務～<br>請問有什麼我可以幫您的嗎？"); showMainMenu(); }); return; }
+      if(input.includes("重來")||input.includes("重新")||input.includes("返回")||input.includes("選單")||input.includes("menu")||input.includes("主選單")){ respondWithTyping(()=>{ bot("好的，已回到主選單！"); showMainMenu(); }); return; }
+      let foundTeacher=null;
+      for(let name in teacherDB){if(input.includes(name)){foundTeacher=name;break;}}
+      if(!foundTeacher){for(let alias in teacherAliases){if(input.includes(alias)){foundTeacher=teacherAliases[alias];break;}}}
+      if(foundTeacher){ const t=teacherDB[foundTeacher]; if(input.includes("分機")||input.includes("電話")){respondWithTyping(()=>{bot(`📞 ${foundTeacher} 老師的分機：<b>${t.extension}</b>`);showAskOptions();});return;} if(input.includes("辦公室")||input.includes("位置")||input.includes("研究室")){respondWithTyping(()=>{bot(`🏢 ${foundTeacher} 老師的辦公室：<b>${t.office}</b>`);showAskOptions();});return;} if(input.includes("專長")||input.includes("研究")){respondWithTyping(()=>{bot(`🎓 ${foundTeacher} 老師的研究專長：<br><b>${t.expertise}</b>`);showAskOptions();});return;} respondWithTyping(()=>{showTeacher(foundTeacher);}); return; }
+      if(fuzzyHas(input,"師資成員")||fuzzyHas(input,"師資")||fuzzyHas(input,"老師")){ respondWithTyping(()=>{ bot("👨‍🏫 <b>商智所成員查詢：</b><br>請選擇類別："); chat.innerHTML+=`<div class="faculty-menu" style="margin-top:8px;"><span class="option-btn" onclick="showFaculty('fulltime')">專任師資</span><span class="option-btn" onclick="showFaculty('staff')">行政人員</span></div>`; lockInput(); chat.scrollTop=chat.scrollHeight; }); return; }
+      if(fuzzyHas(input,"研究生專區")||fuzzyHas(input,"階段")||fuzzyHas(input,"指導教授")||fuzzyHas(input,"計畫書")||fuzzyHas(input,"口試")||fuzzyHas(input,"離校")||fuzzyHas(input,"檢查表")||fuzzyHas(input,"延畢")||fuzzyHas(input,"休學")||fuzzyHas(input,"復學")||fuzzyHas(input,"論文進度")){ respondWithTyping(()=>{ bot("📋 <b>研究生專區</b><br>請選擇項目："); chat.innerHTML+=`<div class="faculty-menu" style="margin-top:8px;"><span class="option-btn" onclick="showGradThesis()">📝 論文流程</span><span class="option-btn" onclick="ask('研究室')">🏠 研究室位置</span><span class="option-btn" onclick="showGradWelfare()">🎁 入學福利</span></div>`; lockInput(); chat.scrollTop=chat.scrollHeight; }); return; }
+      if(fuzzyHas(input,"研究室")){ respondWithTyping(()=>{ bot("🏠 <b>研究生研究室</b><br><br>📍 位置：綜合教學大樓 3F E32<br>🔑 入學後請洽所辦（2F E28）申請鑰匙"); chat.innerHTML+=`<div class="option-group" style="margin-top:10px;"><span class="option-btn" onclick="ask('所辦')">📞 所辦聯絡</span><span class="option-btn" onclick="showGradWelfare()">🎁 入學福利</span><span class="option-btn" onclick="more()">還有問題</span></div>`; lockInput(); chat.scrollTop=chat.scrollHeight; }); return; }
+      if(fuzzyHas(input,"所辦")||(fuzzyHas(input,"電話")&&!foundTeacher)||fuzzyHas(input,"聯絡")){ respondWithTyping(()=>{ bot("📍 <b>商智所辦公室：</b><br>📞 (02) 2257-6167 分機 1137<br>📍 綜合教學大樓 2F E28"); chat.innerHTML+=`<div class="option-group" style="margin-top:10px;"><span class="option-btn" onclick="more()">還有問題</span><span class="option-btn" onclick="confirmClose()">結束</span></div>`; lockInput(); chat.scrollTop=chat.scrollHeight; }); return; }
+      if(fuzzyHas(input,"學術倫理")||fuzzyHas(input,"倫理")){ respondWithTyping(()=>{ bot("📖 <b>學術倫理（必修）：</b><br>每位學生須完成學術倫理教育課程與測驗。<br>👉 <a href='https://ethics-s.moe.edu.tw/login/s/' target='_blank'>臺灣學術倫理教育資源中心</a>"); showAskOptions(); }); return; }
+      if(fuzzyHas(input,"論文")||fuzzyHas(input,"格式")){ respondWithTyping(()=>{ bot("📝 <b>商智所論文規範：</b><br>🎨 封面：114學年為<b>淺咖啡色</b><br>✒️ 字體：中標楷12/英Times 12<br>📏 全文 1.5 倍行距<br>👉 <a href='https://bi100.chihlee.edu.tw/p/404-1045-126917.php?Lang=zh-tw' target='_blank'>下載詳細手冊</a>"); chat.innerHTML+=`<div class="option-group" style="margin-top:10px;"><span class="option-btn" onclick="ask('研究生專區')">📋 論文四階段流程</span><span class="option-btn" onclick="more()">還有問題</span></div>`; lockInput(); chat.scrollTop=chat.scrollHeight; }); return; }
+      if(fuzzyHas(input,"學分")||fuzzyHas(input,"應修")||fuzzyHas(input,"必修")||fuzzyHas(input,"選修")||fuzzyHas(input,"畢業")||fuzzyHas(input,"課程")){ respondWithTyping(()=>{ bot("📚 請問您的入學年度是？"); chat.innerHTML+=`<div class="year-menu"><span class="option-btn" onclick="showYearDetail('114')">114學年</span><span class="option-btn" onclick="showYearDetail('113')">113學年</span><span class="option-btn" onclick="showYearDetail('112')">112學年</span></div>`; lockInput(); chat.scrollTop=chat.scrollHeight; }); return; }
+      const similarTeacher=findSimilarTeacher(input);
+      if(similarTeacher){ respondWithTyping(()=>{ bot(`您是不是要查詢 <b>${similarTeacher}</b> 老師？😊`); chat.innerHTML+=`<div class="option-group" style="margin-top:8px;"><span class="option-btn" onclick="showTeacher('${similarTeacher}')">✅ 是的</span><span class="option-btn" onclick="more()">❌ 返回選單</span></div>`; lockInput(); chat.scrollTop=chat.scrollHeight; }); return; }
+      respondWithTyping(()=>{ bot("抱歉，我不太確定您的意思 😅<br>請嘗試輸入「老師」、「論文」、「學分」等關鍵字"); showMainMenu(); });
+    }
+
+    window.showTeacher=function(name){ removeOldButtons(); const t=teacherDB[name]; bot(`👨‍🏫 <b>${name}：</b><br>${t.info}<br><br>👉 <a href="${t.link}" target="_blank">📄 查看詳細 PDF</a>`); chat.innerHTML+=`<div class="option-group" style="margin-top:10px;"><span class="option-btn" onclick="showTeacherDetail('${name}')">📋 更多資訊</span><span class="option-btn" onclick="more()">還有問題</span><span class="option-btn" onclick="confirmClose()">結束</span></div>`; unlockInput(); chat.scrollTop=chat.scrollHeight; };
+    window.showTeacherDetail=function(name){ removeOldButtons(); user(`${name} 老師`); respondWithTyping(()=>{ bot("請選擇想了解的資訊："); chat.innerHTML+=`<div class="option-group" style="margin-top:10px;"><span class="option-btn" onclick="ask('${name} 分機')">📞 分機</span><span class="option-btn" onclick="ask('${name} 辦公室')">🏢 辦公室</span><span class="option-btn" onclick="ask('${name} 專長')">🎓 研究專長</span><span class="option-btn" onclick="more()">返回</span></div>`; unlockInput(); chat.scrollTop=chat.scrollHeight; }); };
+    window.showFaculty=function(type){ removeOldButtons(); respondWithTyping(()=>{ if(type==='fulltime'){ bot("請選擇老師："); chat.innerHTML+=`<div class="faculty-menu">`+Object.keys(teacherDB).map(n=>`<span class="option-btn" onclick="showTeacher('${n}')">${n}</span>`).join('')+`<span class="option-btn" onclick="more()">↩ 返回</span></div>`; lockInput(); } else { bot("👩‍💼 <b>行政人員：</b><br>• 傅浩澐 秘書<br>• 辦公室：2F E28<br>• 分機：1137"); showAskOptions(); } }); };
+    window.showGradThesis=function(){ removeOldButtons(); user("論文流程"); respondWithTyping(()=>{ bot("📝 <b>碩士論文四階段流程</b><br><br>📌 <b>第一階段｜申請指導教授</b><br>確認指導教授，完成同意書、論文題目審查表及業界指導教授諮詢紀錄。<br><br>📌 <b>第二階段｜計畫書提報</b><br>送審查委員審查，依意見修改並取得通過。<br><br>📌 <b>第三階段｜學位口試</b><br>申請口試，邀請至少 <b>3 位委員</b>（含 1 位校外），口試通過後完成最終修改。<br><br>📌 <b>第四階段｜離校申請</b><br>論文上傳、各單位簽章、確認無欠費後領取畢業證書。"); chat.innerHTML+=`<div class="faculty-menu" style="margin-top:8px;"><span class="option-btn" onclick="ask('研究生專區')">↩ 返回</span><span class="option-btn" onclick="more()">還有問題</span></div>`; lockInput(); chat.scrollTop=chat.scrollHeight; }); };
+    window.showGradWelfare=function(){ removeOldButtons(); user("入學福利"); respondWithTyping(()=>{ bot("🎁 <b>入學福利</b><br><br>💻 <b>筆記型電腦</b>：錄取後學院提供，畢業時需歸還。<br><br>🔑 <b>研究室鑰匙</b>：可申請商智所研究室（3F E32）專屬鑰匙，在校期間自由進出。<br><br>📍 申請請攜帶學生證洽所辦（2F E28）<br>📞 傅浩澐秘書 分機 1137"); chat.innerHTML+=`<div class="option-group" style="margin-top:10px;"><span class="option-btn" onclick="ask('研究生專區')">↩ 返回</span><span class="option-btn" onclick="more()">還有問題</span></div>`; lockInput(); chat.scrollTop=chat.scrollHeight; }); };
+    function showAskOptions(){ chat.innerHTML+=`<div class="option-group" style="margin-top:10px;"><span class="option-btn" onclick="more()">還有問題</span><span class="option-btn" onclick="confirmClose()">結束</span></div>`; unlockInput(); chat.scrollTop=chat.scrollHeight; }
+    window.ask=function(q){ user(q); handle(q); };
+    window.more=function(){ removeOldButtons(); respondWithTyping(()=>{ bot("請問還有什麼我可以幫您的？"); showMainMenu(); }); };
+    function showMainMenu(){ chat.innerHTML+=`<div class="main-menu" style="margin-top:10px;"><span class="option-btn" onclick="ask('師資成員')">👥 師資</span><span class="option-btn" onclick="ask('應修科目表')">📚 學分</span><span class="option-btn" onclick="ask('研究生專區')">📋 研究生</span><span class="option-btn" onclick="ask('論文格式')">📝 論文</span><span class="option-btn" onclick="ask('學術倫理')">⚖️ 倫理</span></div>`; unlockInput(); chat.scrollTop=chat.scrollHeight; }
+
+    function start(){
+      bot("同學您好！我是商智所 AI 助教 🎓<br><br>📌 <b>畢業總學分：<u>36 學分</u></b><br>• 必修：<b>17 學分</b>（含碩士論文 6 學分）<br>• 專業選修：<b>19 學分</b><br><br>請點選按鈕或輸入關鍵字開始查詢：");
+      showMainMenu();
+      const proactiveQs=[{text:'請問您是幾學年入學的同學呢？😊',btns:[['114學年','114學年應修科目表'],['113學年','113學年應修科目表'],['112學年','112學年應修科目表']]},{text:'需要查詢老師的資訊嗎？👨‍🏫',btns:[['林于正','林于正'],['張民忠','張民忠'],['游輝城','游輝城'],['費聿明','費聿明'],['張國謙','張國謙']]},{text:'對論文或畢業流程有疑問嗎？📋',btns:[['論文格式','論文格式'],['研究生流程','研究生專區'],['學術倫理','學術倫理']]}];
+      const pb=document.getElementById('proactiveBubble');
+      setTimeout(()=>{ if(chatWindow.style.display!=='flex'||chat.querySelectorAll('.user').length>0)return; const rect=chatWindow.getBoundingClientRect(); if(rect.left<220)return; const q=proactiveQs[Math.floor(Math.random()*proactiveQs.length)]; pb.innerHTML=`<div style="font-weight:bold;margin-bottom:4px;">💬 ${q.text}</div>`; q.btns.forEach(([label,query],i)=>{ const btn=document.createElement('div'); btn.className='pb-btn'; btn.textContent=label; btn.style.animationDelay=(i*0.25+0.2)+'s'; btn.onclick=()=>{pb.style.display='none';ask(query);}; pb.appendChild(btn); }); pb.style.left=(rect.left-215-moveX)+'px'; pb.style.top=(rect.bottom-165-moveY)+'px'; pb.style.transform=`translate(${moveX}px,${moveY}px)`; pb.style.display='block'; setTimeout(()=>{pb.style.display='none';},12000); },6000);
+    }
+
+    window._chatStart = start;
+    window.showYearDetail=function(year){ removeOldButtons(); user(year+"學年度"); const yearData={'114':{total:36,required:17,elective:19,reqCourses:"研究方法(2)、數量分析應用(2)、企業領袖大師專業素養論壇(1+1)、產業專題討論及文獻評析(2)、專題研討(3)、碩士論文(6)",electCourses:"生成式AI應用、創新商務營運模式、資料探勘與分析、國際標準與法規、碳權投資交易、永續管理、AI商務智慧應用、數位品牌與行銷等（各 2 學分）"},'113':{total:36,required:17,elective:19,reqCourses:"研究方法(2)、數量分析應用(3)、企業領袖大師專業素養論壇(1+1)、產業專題討論及文獻評析(2)、專題研討(2)、碩士論文(6)",electCourses:"資料探勘與分析(3)、創新商務營運模式(3)、國際標準與法規(2)、碳權投資交易(2)、AI商務智慧應用(2)等"},'112':{total:36,required:17,elective:19,reqCourses:"研究方法(3)、數量分析應用(3)、企業領袖大師專業素養論壇(1)、專題研討(3)、智慧商務專業素養論壇(1)、碩士論文(6)",electCourses:"資料探勘與分析(3)、統計與數據科學(3)、創新商務營運模式(3)等"}}; const d=yearData[year]; let pdfUrl=(year==='114')?"https://drive.google.com/file/d/19r-kwADCUkCKG5NrjdlcaDmXN7hQmalq/preview":(year==='113')?"https://drive.google.com/file/d/13Jv_soMnew_7xWIlEy0T8gI6sYX-bxKb/preview":"https://drive.google.com/file/d/14rVATWh7kwIsvkuPq8QFyWayuc7ohI_K/preview"; respondWithTyping(()=>{ bot(`🎓 <b>${year} 學年度畢業門檻：</b><br><br>📌 畢業總學分：<b>${d.total} 學分</b><br>• 必修：${d.required} 學分（含碩士論文 6 學分）<br>• 專業選修：${d.elective} 學分<br><br>📘 <b>必修課程：</b><br>${d.reqCourses}<br><br>📗 <b>選修課程：</b><br>${d.electCourses}`); chat.innerHTML+=`<iframe src="${pdfUrl}" width="100%" height="300" style="border:1px solid #ddd;border-radius:10px;margin-top:10px;"></iframe><div style="margin-top:10px;"><span class="option-btn" onclick="window.open('${pdfUrl}','_blank')">🔍 查看完整科目表</span></div>`; showAskOptions(); }); };
+
+    window.send=function(){ let t=msgInput.value.trim(); if(!t)return; user(t); msgInput.value=""; document.getElementById('charCount').textContent='0/500'; handle(t); };
+    msgInput.addEventListener("keypress",(e)=>{if(e.key==="Enter")send();});
+    window.copyMsg=function(el){ navigator.clipboard.writeText(el.innerText.replace('🤖 ','')).catch(()=>{}); el.style.outline='2px solid #22C55E'; setTimeout(()=>el.style.outline='',800); };
+    window.restartChat=function(){ isProcessing=false; chat.innerHTML=''; msgInput.value=''; document.getElementById('charCount').textContent='0/500'; unlockInput(); start(); };
+    msgInput.addEventListener('input',()=>{ document.getElementById('charCount').textContent=msgInput.value.length+'/500'; });
+    const scrollBtn=document.getElementById('scrollBtn');
+    chat.addEventListener('scroll',()=>{ const atLatest=chat.scrollTop>=chat.scrollHeight-chat.clientHeight-50; if(atLatest){scrollBtn.style.display='none';return;} const rect=chatWindow.getBoundingClientRect(); scrollBtn.style.left=(rect.left+rect.width/2)+'px'; scrollBtn.style.top=(rect.bottom-145)+'px'; scrollBtn.style.display='block'; });
+    scrollBtn.onclick=()=>{ chat.scrollTop=chat.scrollHeight; scrollBtn.style.display='none'; };
+  });
+  </script>
+
+
+  <!-- ===== DEMO MODAL ===== -->
+  <div id="demoModal" style="display:none;position:fixed;inset:0;z-index:19998;background:rgba(5,9,24,0.93);backdrop-filter:blur(18px);align-items:center;justify-content:center;flex-direction:column;gap:20px;">
+
+    <!-- 標題標籤 -->
+    <div style="display:flex;align-items:center;gap:10px;background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.25);padding:8px 24px;border-radius:50px;">
+      <span style="width:8px;height:8px;border-radius:50%;background:#22c55e;animation:pulseDot 2s ease-in-out infinite;flex-shrink:0;"></span>
+      <span style="color:var(--accent);font-size:0.82rem;font-weight:bold;letter-spacing:2px;font-family:'Microsoft JhengHei',sans-serif;">🎓 商智所 AI 助教 · Live Demo</span>
+    </div>
+
+    <!-- 聊天視窗容器 -->
+    <div style="position:relative;">
+      <div id="demoChatHolder" style="width:420px;height:600px;border-radius:20px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,0.7);border:1px solid rgba(96,165,250,0.15);"></div>
+      <!-- 關閉按鈕 -->
+      <button onclick="closeDemo()" title="關閉" style="position:absolute;top:-16px;right:-16px;width:36px;height:36px;background:white;border-radius:50%;border:none;cursor:pointer;font-size:1rem;font-weight:bold;color:#333;box-shadow:0 4px 16px rgba(0,0,0,0.4);z-index:20001;display:flex;align-items:center;justify-content:center;transition:0.2s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform=''">✕</button>
+    </div>
+
+    <div style="color:rgba(255,255,255,0.25);font-size:0.72rem;letter-spacing:3px;cursor:pointer;font-family:'Segoe UI',sans-serif;" onclick="closeDemo()">ESC 關閉 · 點背景關閉</div>
+  </div>
+
+  <style>
+    @keyframes modalPop {
+      from { transform: scale(0.85) translateY(20px); opacity: 0; }
+      to   { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    #demoChatHolder > #chatWindow {
+      animation: modalPop 0.4s cubic-bezier(.22,.68,0,1.2) !important;
+    }
+  </style>
+
+  <script>
+  (function() {
+    var _inDemoMode = false;
+    var _origCwParent = null;
+
+    window.openDemo = function() {
+      if (_inDemoMode) return;
+      _inDemoMode = true;
+
+      var modal   = document.getElementById('demoModal');
+      var cw      = document.getElementById('chatWindow');
+      var holder  = document.getElementById('demoChatHolder');
+
+      // 隱藏浮動的引導泡泡和 hint
+      var gb = document.getElementById('guideBubble');
+      var dh = document.getElementById('demoHint');
+      if (gb) gb.style.display = 'none';
+      if (dh) dh.style.display = 'none';
+
+      // 記住原本父層
+      _origCwParent = cw.parentNode;
+
+      // 移進 modal
+      holder.appendChild(cw);
+
+      // 覆寫樣式，讓聊天窗填滿 holder
+      cw.style.cssText = [
+        'position:relative',
+        'width:100%',
+        'height:100%',
+        'display:flex',
+        'transform:scaleY(-1)',   // 保留反轉捲動 trick
+        'bottom:auto',
+        'right:auto',
+        'border-radius:0',
+        'box-shadow:none',
+        'border:none',
+        'resize:none',
+        'z-index:1'
+      ].join('!important;') + '!important;';
+
+      modal.style.display = 'flex';
+
+      // 若聊天記錄是空的則啟動
+      var chatEl = document.getElementById('chat');
+      if (chatEl && chatEl.innerHTML.trim() === '') {
+        window._chatStart && window._chatStart();
+      }
+    };
+
+    window.closeDemo = function() {
+      if (!_inDemoMode) return;
+      _inDemoMode = false;
+
+      var modal  = document.getElementById('demoModal');
+      var cw     = document.getElementById('chatWindow');
+
+      // 移回原本父層
+      if (_origCwParent) _origCwParent.appendChild(cw);
+
+      // 清除 inline 樣式，讓 CSS rule 接管（position:fixed 還原）
+      cw.removeAttribute('style');
+      cw.style.display = 'none';
+
+      modal.style.display = 'none';
+    };
+
+    // ESC 關閉
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') window.closeDemo();
+    });
+
+    // 點背景關閉
+    document.getElementById('demoModal').addEventListener('click', function(e) {
+      if (e.target === this) window.closeDemo();
+    });
+  })();
+  </script>
+
+</body>
+</html>
