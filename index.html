@@ -1,0 +1,1824 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>商智所 AI 助教 — 展示頁</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
+      background: linear-gradient(135deg, #e8f0fe 0%, #f0f4ff 40%, #f7f9ff 100%);
+      min-height: 100vh;
+    }
+
+    /* ── 頂部 Banner ── */
+    .site-header {
+      background: linear-gradient(90deg, #1A237E 0%, #283593 60%, #3949AB 100%);
+      color: white;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      box-shadow: 0 2px 12px rgba(26,35,126,0.28);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .site-header .logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+    }
+    .site-header .logo-icon {
+      width: 40px; height: 40px;
+      background: white;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+    .site-header .logo-text { font-size: 18px; font-weight: bold; letter-spacing: 0.04em; color: white; }
+    .site-header nav { display: flex; gap: 28px; }
+    .site-header nav a {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      font-size: 14px;
+      padding: 4px 0;
+      border-bottom: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .site-header nav a:hover { color: white; border-color: white; }
+
+    /* ── Hero 區塊 ── */
+    .hero {
+      text-align: center;
+      padding: 60px 20px 20px;
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      color: #1A237E;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      margin-bottom: 12px;
+    }
+    .hero p {
+      color: #555;
+      font-size: 1rem;
+      max-width: 540px;
+      margin: 0 auto 10px;
+      line-height: 1.7;
+    }
+    .badge-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+    .badge {
+      background: white;
+      border: 1.5px solid #c5d0f0;
+      border-radius: 30px;
+      padding: 6px 14px;
+      font-size: 12.5px;
+      color: #1A237E;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(26,35,126,0.08);
+    }
+
+    /* ── 聊天機器人容器 ── */
+    #chatbot-section {
+      max-width: 880px;
+      margin: 30px auto 0;
+      padding: 0 20px 60px;
+    }
+    .section-label {
+      font-size: 13px;
+      color: #888;
+      text-align: center;
+      margin-bottom: 14px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* ── 頁尾 ── */
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: #aaa;
+      font-size: 12px;
+      border-top: 1px solid #e0e6f0;
+      background: white;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="logo" href="#">
+    <div class="logo-icon">🎓</div>
+    <span class="logo-text">致理科技大學 商務智慧與創新研究所</span>
+  </a>
+  <nav>
+    <a href="#">首頁</a>
+    <a href="#">師資陣容</a>
+    <a href="#">課程規劃</a>
+    <a href="#">研究生專區</a>
+    <a href="#">聯絡我們</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>🤖 商智所 AI 助教</h1>
+  <p>24 小時即時解答研究所相關問題，包含師資查詢、修課學分、論文流程、所辦聯絡等。</p>
+  <div class="badge-row">
+    <span class="badge">👥 師資成員</span>
+    <span class="badge">📚 應修學分</span>
+    <span class="badge">📝 論文流程</span>
+    <span class="badge">📅 行事曆</span>
+    <span class="badge">⚖️ 學術倫理</span>
+    <span class="badge">🏠 休學/復學</span>
+  </div>
+</section>
+
+<section id="chatbot-section">
+  <p class="section-label">▼ 與 AI 助教互動</p>
+  <!-- chatbot widget start -->
+<style>
+  /* 視窗：左上角縮放、鎖定按鈕上方、配色維持 */
+  #chatWindow {
+    position: fixed;
+    bottom: 95px;
+    right: 25px;
+    width: 320px;
+    height: 500px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    display: none;
+    flex-direction: column;
+    z-index: 9999;
+    border: 1px solid #e0e0e0;
+    font-family: "Microsoft JhengHei", sans-serif;
+    resize: both;
+    overflow: hidden;
+    direction: rtl;
+    transform: scaleY(-1);
+  }
+
+  #chatWindow>* {
+    direction: ltr;
+    transform: scaleY(-1);
+  }
+
+  #chatHeader {
+    background: #EAF0F6;
+    color: #000000 !important;
+    padding: 15px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #d1d9e0;
+    flex-shrink: 0;
+  }
+
+  #closeBtn {
+    cursor: pointer;
+    font-size: 22px;
+    color: #000 !important;
+    padding: 0 5px;
+  }
+
+  #chat {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #f4f7f9;
+  }
+
+  #chat a {
+    color: #1A237E !important;
+    text-decoration: underline;
+    font-weight: bold;
+  }
+
+  .user {
+    text-align: right;
+    margin-bottom: 15px;
+  }
+
+  .user span {
+    background: #ffffff;
+    color: #000 !important;
+    padding: 10px 14px;
+    border-radius: 15px 15px 2px 15px;
+    display: inline-block;
+    border: 1.5px solid #1A237E;
+  }
+
+  .bot {
+    text-align: left;
+    margin-bottom: 15px;
+  }
+
+  .bot span {
+    background: #ffffff;
+    color: #000 !important;
+    padding: 10px 14px;
+    border-radius: 15px 15px 15px 2px;
+    display: inline-block;
+    border: 1px solid #ebebeb;
+    line-height: 1.6;
+    cursor: pointer;
+  }
+
+  .option-btn, a.call-btn, #chat a.call-btn {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 4px;
+    padding: 8px 16px;
+    border-radius: 50px;
+    background: #ffffff;
+    color: #000 !important;
+    cursor: pointer;
+    border: 1.5px solid #1A237E;
+    font-size: 0.9em;
+    font-weight: bold;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .option-btn:hover, a.call-btn:hover, #chat a.call-btn:hover,
+  .option-btn:focus {
+    background: #EAF0F6;
+    outline: 2px solid #1A237E;
+  }
+  .option-btn:active, a.call-btn:active {
+    background: #d0dff5;
+    transform: scale(0.96);
+  }
+  .option-btn, a.call-btn {
+    touch-action: manipulation;
+  }
+
+  a.call-btn {
+    text-decoration: none !important;
+  }
+
+  #inputArea {
+    display: flex;
+    padding: 15px;
+    background: white;
+    border-top: 1px solid #eee;
+    flex-shrink: 0;
+    padding-bottom: calc(15px + env(safe-area-inset-bottom));
+  }
+
+  .input-wrapper {
+    position: relative;
+    flex: 1;
+    margin-right: 8px;
+  }
+
+  #msg {
+    width: 100%;
+    padding: 10px 46px 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    outline: none;
+    color: #000 !important;
+    box-sizing: border-box;
+  }
+
+  #sendBtn {
+    background: #ffffff;
+    color: #1A237E !important;
+    border: 1.5px solid #1A237E;
+    padding: 0 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  #msg:disabled {
+    background: #f0f0f0;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  #sendBtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  #emojiBtn, #micBtn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 8px;
+    transition: background 0.15s;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  #emojiBtn:hover, #micBtn:hover { background: #f0f4ff; }
+  #micBtn.recording { animation: micPulse 0.9s ease infinite; }
+  @keyframes micPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.25); }
+  }
+
+  /* 表情選擇器 */
+  #emojiPicker {
+    position: fixed;
+    background: white;
+    border: 1px solid #e0e8f4;
+    border-radius: 14px;
+    padding: 8px;
+    box-shadow: 0 8px 28px rgba(26,35,126,0.14);
+    display: none;
+    flex-wrap: wrap;
+    gap: 2px;
+    z-index: 10002;
+    width: 218px;
+    font-family: "Microsoft JhengHei", sans-serif;
+  }
+  .emoji-item {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.12s, transform 0.1s;
+  }
+  .emoji-item:hover { background: #f0f4ff; transform: scale(1.2); }
+
+  #chatToggle {
+    position: fixed;
+    bottom: 20px;
+    right: 25px;
+    width: 60px;
+    height: 60px;
+    background: #ffffff;
+    border: 2px solid #1A237E;
+    border-radius: 50%;
+    color: #1A237E;
+    font-size: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: grab;
+    z-index: 9999;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    user-select: none;
+    touch-action: none;
+  }
+
+  /* 打字動畫 */
+  .typing-indicator {
+    display: inline-flex;
+    gap: 3px;
+    padding: 2px 0;
+  }
+
+  .typing-indicator span {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #1A237E;
+    display: inline-block;
+    animation: typingBounce 1.4s infinite ease-in-out;
+  }
+
+  .typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  @keyframes typingBounce {
+
+    0%,
+    60%,
+    100% {
+      opacity: 0.3;
+      transform: translateY(0);
+    }
+
+    30% {
+      opacity: 1;
+      transform: translateY(-6px);
+    }
+  }
+
+  /* 時間戳 */
+  .msg-time {
+    font-size: 10px;
+    color: #aaa;
+    margin-top: 3px;
+  }
+
+  .user .msg-time {
+    text-align: right;
+  }
+
+  .bot .msg-time {
+    text-align: left;
+    margin-left: 4px;
+  }
+
+  /* 滿意度評分 */
+  .rating-container {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin: 12px 0 4px;
+  }
+
+  .rating-star {
+    font-size: 26px;
+    cursor: pointer;
+    transition: transform 0.2s, filter 0.2s;
+    filter: grayscale(0.8) brightness(0.8);
+  }
+
+  .rating-star:hover,
+  .rating-star.active {
+    transform: scale(1.3);
+    filter: grayscale(0) brightness(1);
+  }
+
+  .rating-thanks {
+    text-align: center;
+    color: #1A237E;
+    font-weight: bold;
+    margin-top: 8px;
+    font-size: 13px;
+    animation: fadeInUp 0.4s ease;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* 快捷標籤 */
+  #quickTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 14px;
+    background: linear-gradient(180deg, #edf3fd 0%, #f6f9ff 100%);
+    border-top: 1.5px solid #d8e5f8;
+    flex-shrink: 0;
+  }
+
+  .quick-tag {
+    white-space: nowrap;
+    padding: 5px 11px;
+    border-radius: 14px;
+    background: #ffffff;
+    color: #1A237E;
+    font-size: 11.5px;
+    cursor: pointer;
+    border: 1.5px solid #c2cff2;
+    transition: background 0.18s, color 0.18s, box-shadow 0.18s, border-color 0.18s;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    box-shadow: 0 1px 4px rgba(26,35,126,0.08);
+  }
+
+  .quick-tag:hover {
+    background: #1A237E;
+    color: white;
+    border-color: #1A237E;
+    box-shadow: 0 3px 10px rgba(26,35,126,0.22);
+  }
+
+  /* 導引泡泡樣式 */
+  #guideBubble {
+    position: fixed;
+    bottom: 95px;
+    right: 25px;
+    background: #ffffff;
+    border: 2px solid #1A237E;
+    border-radius: 20px;
+    padding: 10px 14px;
+    color: #1A237E;
+    font-weight: bold;
+    font-size: 12px;
+    font-family: "Microsoft JhengHei", sans-serif;
+    box-shadow: 0 6px 20px rgba(26, 35, 126, 0.2);
+    z-index: 9998;
+    cursor: pointer;
+    white-space: normal;
+    display: none;
+    line-height: 1.3;
+    max-width: 200px;
+    text-align: center;
+    animation: none;
+  }
+
+  #guideBubble::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    right: 20px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #ffffff;
+  }
+
+  /* 手機響應式設計 */
+  @media (max-width: 768px) {
+    #chatWindow {
+      width: 95vw !important;
+      height: 80vh !important;
+      bottom: 70px !important;
+      right: 10px !important;
+      max-width: 400px;
+      max-height: 600px;
+    }
+
+    #chatToggle {
+      width: 50px !important;
+      height: 50px !important;
+      font-size: 24px !important;
+      bottom: 15px !important;
+      right: 15px !important;
+    }
+
+    #guideBubble {
+      bottom: 75px !important;
+      right: 15px !important;
+      max-width: 180px !important;
+      font-size: 11px !important;
+    }
+
+    .option-btn {
+      font-size: 0.8em !important;
+      padding: 6px 12px !important;
+    }
+
+    #chat {
+      padding: 15px !important;
+    }
+
+    .bot span, .user span {
+      font-size: 14px !important;
+    }
+
+    #msg {
+      font-size: 16px !important; /* 防止iOS縮放 */
+    }
+  }
+
+  @media (max-width: 768px) {
+    #chatWindow {
+      resize: none !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    #chatWindow {
+      width: 98vw !important;
+      height: 85vh !important;
+      bottom: 60px !important;
+      right: 5px !important;
+    }
+
+    #chatToggle {
+      width: 45px !important;
+      height: 45px !important;
+      font-size: 20px !important;
+    }
+
+    .rating-star {
+      font-size: 22px !important;
+    }
+  }
+
+  /* 字元計數（嵌在輸入框右側） */
+  #charCount {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+    color: #bbb;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  /* 回到最新訊息按鈕 */
+  #scrollBtn {
+    position: fixed;
+    background: rgba(26,35,126,0.85);
+    color: white;
+    padding: 5px 14px;
+    border-radius: 15px;
+    font-size: 11px;
+    cursor: pointer;
+    display: none;
+    z-index: 10000;
+    font-family: "Microsoft JhengHei", sans-serif;
+    transform: translateX(-50%);
+  }
+
+  /* 主動提問浮動泡泡 */
+  #proactiveBubble {
+    position: fixed;
+    background: #1A237E;
+    color: white;
+    padding: 12px 14px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-family: "Microsoft JhengHei", sans-serif;
+    display: none;
+    z-index: 10001;
+    box-shadow: 0 4px 15px rgba(26,35,126,0.3);
+    max-width: 200px;
+    animation: fadeInUp 0.4s ease;
+  }
+  .pb-btn {
+    display: block;
+    margin: 6px 0 0;
+    padding: 5px 10px;
+    background: white;
+    color: #1A237E;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: bold;
+    opacity: 0;
+    animation: fadeInUp 0.3s ease forwards;
+  }
+
+  /* 視窗開關動畫 */
+  .chat-opening {
+    animation: chatWindowIn 0.28s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+  }
+  .chat-closing {
+    animation: chatWindowOut 0.2s ease-in forwards;
+  }
+  @keyframes chatWindowIn {
+    from { opacity: 0; scale: 1 0.88; }
+    to   { opacity: 1; scale: 1 1; }
+  }
+  @keyframes chatWindowOut {
+    from { opacity: 1; scale: 1 1; }
+    to   { opacity: 0; scale: 1 0.88; }
+  }
+
+  /* 獨立頁面進場動畫 */
+  .chat-entrance {
+    animation: chatEntranceIn 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  @keyframes chatEntranceIn {
+    0%   { opacity: 0; scale: 0.82; }
+    55%  { opacity: 1; scale: 1.04; }
+    78%  { scale: 0.97; }
+    100% { opacity: 1; scale: 1; }
+  }
+
+  /* 獨立頁面：滿版嵌入 */
+  #chatWindow.standalone-mode {
+    position: relative !important;
+    bottom: auto !important;
+    right: auto !important;
+    width: calc(100% - 40px) !important;
+    max-width: 820px !important;
+    height: calc(100vh - 200px) !important;
+    min-height: 580px !important;
+    max-height: 860px !important;
+    margin: 16px auto 40px !important;
+    resize: none !important;
+    border-radius: 22px !important;
+    border: none !important;
+    box-shadow: 0 24px 80px rgba(26,35,126,0.18), 0 6px 24px rgba(0,0,0,0.07) !important;
+  }
+  #chatWindow.standalone-mode #chatHeader {
+    background: linear-gradient(135deg, #dce8f8 0%, #EAF0F6 100%) !important;
+    padding: 18px 24px !important;
+    border-bottom: 1.5px solid #c5d8ee !important;
+    border-radius: 22px 22px 0 0 !important;
+  }
+  #chatWindow.standalone-mode #chat {
+    background: linear-gradient(180deg, #eef3f9 0%, #f4f7fb 100%) !important;
+    padding: 24px 28px !important;
+  }
+  #chatWindow.standalone-mode #inputArea {
+    padding: 14px 22px !important;
+  }
+  #chatWindow.standalone-mode #quickTags {
+    padding: 10px 22px !important;
+  }
+  #chatWindow.standalone-mode #closeBtn {
+    display: none !important;
+  }
+
+  /* Toggle 脈動（視窗關閉時才顯示） */
+  #chatToggle::after { content:''; position:absolute; inset:-4px; border-radius:50%; border:2px solid rgba(26,35,126,0.45); animation:togglePulse 1.8s ease-out infinite; pointer-events:none; }
+  #chatToggle.chat-open::after { animation:none; opacity:0; }
+  @keyframes togglePulse { 0%{transform:scale(1);opacity:.7} 100%{transform:scale(1.6);opacity:0} }
+
+  /* 傳送按鈕彈跳 */
+  .btn-bounce { animation:sendBounce 0.22s ease; }
+  @keyframes sendBounce { 0%,100%{transform:scale(1)} 40%{transform:scale(.88)} 75%{transform:scale(1.1)} }
+
+
+
+</style>
+
+<div id="guideBubble">👋 您好！我是 AI 小助手，點我開始諮詢喔！</div>
+<div id="chatToggle">🤖</div>
+
+<div id="proactiveBubble"></div>
+<div id="scrollBtn">⬇️ 最新訊息</div>
+<div id="emojiPicker"></div>
+<div id="chatWindow">
+  <div id="inputArea">
+    <button type="button" id="emojiBtn" onclick="toggleEmojiPicker()" title="表情符號">😊</button>
+    <div class="input-wrapper">
+      <input id="msg" placeholder="試試輸入：老師姓名、論文格式、學分..." maxlength="500">
+      <span id="charCount">0/500</span>
+    </div>
+    <button type="button" id="micBtn" onclick="toggleVoice()" title="語音輸入"><svg width="15" height="17" viewBox="0 0 15 17" fill="none"><rect x="4.5" y="0.5" width="6" height="8.5" rx="3" fill="#1A237E"/><path d="M1.5 8C1.5 11.038 4.186 13.5 7.5 13.5C10.814 13.5 13.5 11.038 13.5 8" stroke="#1A237E" stroke-width="1.5" stroke-linecap="round"/><line x1="7.5" y1="13.5" x2="7.5" y2="16" stroke="#1A237E" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="16" x2="10" y2="16" stroke="#1A237E" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+    <button type="button" id="sendBtn" onclick="send()">送出</button>
+  </div>
+  <div id="quickTags">
+    <span class="quick-tag" onclick="ask('師資成員')">👥 師資成員</span>
+    <span class="quick-tag" onclick="ask('應修科目表')">📚 應修學分</span>
+    <span class="quick-tag" onclick="ask('研究生專區')">📋 研究生專區</span>
+    <span class="quick-tag" onclick="ask('所辦')">📞 所辦聯絡</span>
+    <span class="quick-tag" onclick="ask('學術倫理')">⚖️ 學術倫理</span>
+    <span class="quick-tag" onclick="openChecklist()">✅ 自我檢查表</span>
+    <span class="quick-tag" onclick="ask('行事曆')">📅 行事曆</span>
+    <span class="quick-tag" onclick="ask('休學')">🏠 休學/復學</span>
+  </div>
+  <div id="chat"></div>
+  <div id="chatHeader">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <rect x="2" y="4" width="18" height="12" rx="3" fill="#000" />
+        <circle cx="7" cy="10" r="1.2" fill="white" />
+        <circle cx="11" cy="10" r="1.2" fill="white" />
+        <circle cx="15" cy="10" r="1.2" fill="white" />
+        <path d="M7 16l1.5 2.5 2.5-2.5" fill="#000" stroke="#000" stroke-width="1.2" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
+      <div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-weight:bold;font-size:14px;color:#000;">🎓 商智所 AI 助教</span>
+          <span
+            style="width:7px;height:7px;border-radius:50%;background:#22C55E;display:inline-block;flex-shrink:0;"></span>
+        </div>
+        <div style="font-size:11px;color:#22C55E;font-weight:normal;margin-top:1px;text-align:left;">● 線上中</div>
+      </div>
+    </div>
+    <span onclick="restartChat()" title="重新開始" style="cursor:pointer;font-size:18px;margin-right:6px;">🔄</span>
+    <span id="closeBtn" onclick="confirmClose()">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+        <path d="M2 2l9 9M11 2l-9 9" stroke="#000" stroke-width="1.8" stroke-linecap="round" />
+      </svg>
+    </span>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const chat = document.getElementById("chat");
+    const msgInput = document.getElementById("msg");
+    const chatWindow = document.getElementById("chatWindow");
+    const chatToggle = document.getElementById("chatToggle");
+    const guideBubble = document.getElementById("guideBubble");
+
+    let isDragging = false;
+    let startX, startY;
+    let moveX = 0, moveY = 0;
+    let mouseDownX = 0, mouseDownY = 0;
+
+    function openChatWindow() {
+      chatToggle.classList.add('chat-open');
+      chatWindow.style.display = 'flex';
+      chatWindow.classList.remove('chat-closing');
+      void chatWindow.offsetWidth;
+      chatWindow.classList.add('chat-opening');
+    }
+    function closeChatWindow(onDone) {
+      chatToggle.classList.remove('chat-open');
+      chatWindow.classList.remove('chat-opening');
+      chatWindow.classList.add('chat-closing');
+      chatWindow.addEventListener('animationend', () => {
+        chatWindow.style.display = 'none';
+        chatWindow.classList.remove('chat-closing');
+        if (onDone) onDone();
+      }, { once: true });
+    }
+
+    // 導引泡泡已停用
+    guideBubble.style.display = 'none';
+    sessionStorage.setItem('hasSeenGuide', 'true');
+
+    chatToggle.onmousedown = (e) => {
+      startX = e.clientX - moveX;
+      startY = e.clientY - moveY;
+      mouseDownX = e.clientX;
+      mouseDownY = e.clientY;
+      isDragging = true;
+      chatToggle.style.cursor = "grabbing";
+      guideBubble.style.display = "none";
+    };
+
+    function handleDragMove(clientX, clientY) {
+      moveX = clientX - startX;
+      moveY = clientY - startY;
+      chatToggle.style.transform = `translate(${moveX}px, ${moveY}px)`;
+      chatWindow.style.transform = `translate(${moveX}px, ${moveY}px) scaleY(-1)`;
+      guideBubble.style.transform = `translate(${moveX}px, ${moveY}px)`;
+      document.getElementById('proactiveBubble').style.transform = `translate(${moveX}px, ${moveY}px)`;
+      const sb = document.getElementById('scrollBtn');
+      if (sb.style.display === 'block') {
+        const r = chatWindow.getBoundingClientRect();
+        sb.style.left = (r.left + r.width / 2) + 'px';
+        sb.style.top = (r.bottom - 145) + 'px';
+      }
+    }
+
+    document.onmousemove = (e) => {
+      if (!isDragging) return;
+      handleDragMove(e.clientX, e.clientY);
+    };
+    document.onmouseup = (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      chatToggle.style.cursor = "grab";
+      const dx = Math.abs(e.clientX - mouseDownX);
+      const dy = Math.abs(e.clientY - mouseDownY);
+      if (dx < 5 && dy < 5) {
+        const isVisible = chatWindow.style.display === "flex";
+        if (isVisible) {
+          closeChatWindow();
+          document.getElementById('proactiveBubble').style.display = 'none';
+        } else {
+          openChatWindow();
+          msgInput.focus();
+          if (chat.innerHTML === "") { start(); }
+        }
+      } else {
+        if (chatWindow.style.display !== "flex" && !sessionStorage.getItem("hasSeenGuide")) {
+          guideBubble.style.transform = `translate(${moveX}px, ${moveY}px)`;
+          guideBubble.style.display = "block";
+        }
+      }
+    };
+
+    // === 手機觸控支援 ===
+    chatToggle.ontouchstart = (e) => {
+      const touch = e.touches[0];
+      startX = touch.clientX - moveX;
+      startY = touch.clientY - moveY;
+      mouseDownX = touch.clientX;
+      mouseDownY = touch.clientY;
+      isDragging = true;
+      guideBubble.style.display = "none";
+      e.preventDefault();
+    };
+
+    document.ontouchmove = (e) => {
+      if (!isDragging) return;
+      const touch = e.touches[0];
+      handleDragMove(touch.clientX, touch.clientY);
+      e.preventDefault();
+    };
+
+    document.ontouchend = (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      const touch = e.changedTouches[0];
+      const dx = Math.abs(touch.clientX - mouseDownX);
+      const dy = Math.abs(touch.clientY - mouseDownY);
+      if (dx < 5 && dy < 5) {
+        const isVisible = chatWindow.style.display === "flex";
+        if (isVisible) {
+          closeChatWindow();
+          document.getElementById('proactiveBubble').style.display = 'none';
+        } else {
+          openChatWindow();
+          msgInput.focus();
+          if (chat.innerHTML === "") { start(); }
+        }
+      } else {
+        if (chatWindow.style.display !== "flex" && !sessionStorage.getItem("hasSeenGuide")) {
+          guideBubble.style.transform = `translate(${moveX}px, ${moveY}px)`;
+          guideBubble.style.display = "block";
+        }
+      }
+    };
+
+    // === 工具函數 ===
+    let isProcessing = false;
+    function getTime() { return new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' }); }
+    function removeOldButtons() { document.querySelectorAll('.main-menu, .option-group, .year-menu, .faculty-menu, .rating-container, .rating-thanks').forEach(m => m.remove()); }
+    function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+
+    // 鎖定/解鎖輸入框（Bug修復：選項按鈕出現時禁止打字）
+    function lockInput() { msgInput.disabled = true; document.getElementById('sendBtn').disabled = true; }
+    function unlockInput() { msgInput.disabled = false; document.getElementById('sendBtn').disabled = false; msgInput.focus(); }
+
+    // 傳送按鈕彈跳
+    document.getElementById('sendBtn').addEventListener('click', function(){ this.classList.remove('btn-bounce'); void this.offsetWidth; this.classList.add('btn-bounce'); });
+
+    // 帶時間戳的訊息（直接顯示）
+    function bot(html, onDone) {
+      const t = getTime();
+      const wrapper = document.createElement('div');
+      wrapper.className = 'bot';
+      const span = document.createElement('span');
+      span.onclick = function() { copyMsg(this); };
+      span.title = '點擊複製';
+      span.innerHTML = '🤖 ' + html;
+      const timeEl = document.createElement('div');
+      timeEl.className = 'msg-time';
+      timeEl.textContent = t;
+      wrapper.appendChild(span);
+      wrapper.appendChild(timeEl);
+      chat.appendChild(wrapper);
+      chat.scrollTop = chat.scrollHeight;
+      if (onDone) onDone();
+    }
+    function user(text) {
+      const t = getTime();
+      chat.insertAdjacentHTML('beforeend', `<div class="user"><span>${escapeHTML(text)}</span><div class="msg-time">${t}</div></div>`);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    // 打字動畫
+    function showTyping() {
+      const div = document.createElement('div');
+      div.className = 'bot';
+      div.id = 'typingBubble';
+      div.innerHTML = '<span>🤖 <span class="typing-indicator"><span></span><span></span><span></span></span></span>';
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+    function removeTyping() { const el = document.getElementById('typingBubble'); if (el) el.remove(); }
+    function respondWithTyping(fn) {
+      if (isProcessing) return;
+      isProcessing = true;
+      lockInput();
+      showTyping();
+      setTimeout(() => { removeTyping(); fn(); isProcessing = false; }, 500 + Math.random() * 400);
+    }
+
+    // 模糊匹配（容錯搜尋）
+    function fuzzyHas(input, keyword) {
+      if (input.includes(keyword)) return true;
+      if (keyword.length < 2) return false;
+      for (let i = 0; i <= input.length - keyword.length; i++) {
+        const sub = input.substring(i, i + keyword.length);
+        let m = 0;
+        for (let j = 0; j < keyword.length; j++) { if (sub[j] === keyword[j]) m++; }
+        if (m >= keyword.length - 1 && keyword.length >= 3) return true;
+      }
+      return false;
+    }
+
+    // 老師名字相似比對（Did you mean?）
+    function findSimilarTeacher(input) {
+      if (input.length < 2) return null;
+      for (let name in teacherDB) {
+        for (let i = 0; i <= name.length - 2; i++) {
+          if (input.includes(name.substring(i, i + 2))) return name;
+        }
+      }
+      for (let alias in teacherAliases) {
+        if (alias.length < 2) continue;
+        for (let i = 0; i <= alias.length - 2; i++) {
+          if (input.includes(alias.substring(i, i + 2))) return teacherAliases[alias];
+        }
+      }
+      return null;
+    }
+
+    // --- 關閉 + 滿意度評分 ---
+    window.confirmClose = function () {
+      removeOldButtons();
+      respondWithTyping(() => {
+        bot("在結束之前，請為本次服務評分 😊", () => {
+          chat.insertAdjacentHTML('beforeend', `<div class="rating-container"><span class="rating-star" onclick="rate(1)">⭐</span><span class="rating-star" onclick="rate(2)">⭐</span><span class="rating-star" onclick="rate(3)">⭐</span><span class="rating-star" onclick="rate(4)">⭐</span><span class="rating-star" onclick="rate(5)">⭐</span></div><div class="option-group" style="margin-top:8px;"><span class="option-btn" onclick="skipRating()">跳過評分</span><span class="option-btn" onclick="continueChat()">繼續對話</span></div>`);
+          chat.scrollTop = chat.scrollHeight;
+        });
+      });
+    };
+
+    function closeAndReset() {
+      closeChatWindow(() => {
+        chat.innerHTML = "";
+        unlockInput();
+        sessionStorage.removeItem("hasSeenGuide");
+        setTimeout(() => {
+          guideBubble.style.transform = `translate(${moveX}px, ${moveY}px)`;
+          guideBubble.style.display = "block";
+        }, 500);
+      });
+    }
+
+    window.rate = function (stars) {
+      removeOldButtons();
+      document.querySelectorAll('.rating-container').forEach(el => el.remove());
+      const labels = ['', '😢 很不滿意', '😕 不太滿意', '😐 普通', '😊 滿意', '🤩 非常滿意'];
+      bot(`感謝您的評分！${labels[stars]}<br>您給了 ${'⭐'.repeat(stars)} (${stars}/5 分)`, () => {
+        chat.insertAdjacentHTML('beforeend', `<div class="rating-thanks">感謝使用商智所 AI 助教！祝您學業順利 🎓</div>`);
+      });
+      chat.scrollTop = chat.scrollHeight;
+      setTimeout(() => {
+        if (chatWindow.classList.contains('standalone-mode')) {
+          window.restartChat();
+        } else {
+          closeAndReset();
+        }
+      }, 2000);
+    };
+
+    window.skipRating = function () {
+      removeOldButtons();
+      document.querySelectorAll('.rating-container').forEach(el => el.remove());
+      if (chatWindow.classList.contains('standalone-mode')) {
+        window.restartChat();
+        return;
+      }
+      closeAndReset();
+    };
+
+    window.closeAndClear = function () { window.skipRating(); };
+
+    window.continueChat = function () {
+      removeOldButtons();
+      document.querySelectorAll('.rating-container').forEach(el => el.remove());
+      respondWithTyping(() => {
+        bot("好的，我們繼續對話！請問還有什麼我可以幫您的？", showMainMenu);
+      });
+    };
+
+
+    window.FACULTY_PAGE = "https://bi100.chihlee.edu.tw/p/404-1045-121183.php?Lang=zh-tw";
+    const FACULTY_PAGE = window.FACULTY_PAGE;
+
+    let teacherDB = {
+      '林于正': {
+        title: "助理教授",
+        office: "2F E21",
+        extension: "4111",
+        expertise: "遊戲式數位學習、AI 應用、學習行為分析、虛擬/擴增實境應用",
+        info: "<b>職稱：</b>助理教授<br><b>研究室:</b> 2F E21 | <b>分機:</b> 4111<br><b>研究專長：</b>遊戲式數位學習、AI 應用、學習行為分析、虛擬/擴增實境應用",
+        link: FACULTY_PAGE
+      },
+      '張民忠': {
+        title: "教授",
+        office: "B1 E02-2",
+        extension: "1890",
+        expertise: "永續發展、綠色金融、AI 商務應用、國際貿易與金融",
+        info: "<b>職稱：</b>教授<br><b>研究室:</b> B1 E02-2 | <b>分機:</b> 1890<br><b>研究專長：</b>永續發展、綠色金融、AI 商務應用、國際貿易與金融",
+        link: FACULTY_PAGE
+      },
+      '游輝城': {
+        title: "副教授",
+        office: "B1 E08-3",
+        extension: "1426",
+        expertise: "環境永續、ESG、企業社會責任、公司治理、財務會計",
+        info: "<b>職稱：</b>副教授<br><b>研究室:</b> B1 E08-3 | <b>分機:</b> 1426<br><b>研究專長：</b>環境永續、ESG、企業社會責任、公司治理、財務會計",
+        link: FACULTY_PAGE
+      },
+      '費聿明': {
+        title: "副教授",
+        office: "7F K713-2",
+        extension: "2761",
+        expertise: "大數據分析、物聯網、AI 影像辨識、碳盤查與減量計畫",
+        info: "<b>職稱：</b>副教授<br><b>研究室:</b> 7F K713-2 | <b>分機:</b> 2761<br><b>研究專長：</b>大數據分析、物聯網、AI 影像辨識、碳盤查與減量計畫",
+        link: FACULTY_PAGE
+      },
+      '張國謙': {
+        title: "教授兼所長",
+        office: "1F K19",
+        extension: "1137 / 1138",
+        expertise: "消費行為、資料探勘、服務品質、服務行銷",
+        info: "<b>職稱：</b>教授兼所長<br><b>研究室:</b> 1F K19 | <b>分機:</b> 1137 / 1138<br><b>研究專長：</b>消費行為、資料探勘、服務品質、服務行銷",
+        link: FACULTY_PAGE
+      }
+    };
+
+    // 老師名稱別名映射（含同音字錯字）
+    const teacherAliases = {
+      // 林于正
+      '于正': '林于正', '林老師': '林于正',
+      '漁政': '林于正', '余正': '林于正', '魚政': '林于正', '于政': '林于正', '魚正': '林于正',
+      // 張民忠
+      '民忠': '張民忠', '張民忠老師': '張民忠',
+      '民宗': '張民忠', '民中': '張民忠', '敏忠': '張民忠', '民衷': '張民忠',
+      // 游輝城
+      '輝城': '游輝城', '游老師': '游輝城', '游輝城老師': '游輝城',
+      '灰城': '游輝城', '揮城': '游輝城', '輝成': '游輝城', '惠城': '游輝城',
+      // 費聿明
+      '聿明': '費聿明', '費老師': '費聿明', '費聿明老師': '費聿明',
+      '玉明': '費聿明', '預明': '費聿明', '裕明': '費聿明', '育明': '費聿明', '語明': '費聿明',
+      // 張國謙
+      '國謙': '張國謙', '國謙老師': '張國謙', '張國謙老師': '張國謙', '所長': '張國謙',
+      '國乾': '張國謙', '國前': '張國謙', '國千': '張國謙', '過謙': '張國謙',
+    };
+
+    let supportDB = {
+      '蔡秉恒': { title: '副教授', dept: '財務金融系', link: 'https://fd100.chihlee.edu.tw/p/412-1033-3383.php' },
+      '黃信博': { title: '副教授', dept: '資訊管理系', link: 'https://im100.chihlee.edu.tw/p/404-1037-78416.php' },
+      '楊宣哲': { title: '助理教授', dept: '資訊管理系', link: 'https://im100.chihlee.edu.tw/p/404-1037-96116.php' },
+    };
+
+    const SHEET_API = 'https://script.google.com/macros/s/AKfycbwmX1F3JJURM6MQeOJRo_THZZSQ_sVty60xLc7Ws4JuzGok5wt5BZFuhGGjA0G4tyiA/exec';
+
+    let yearData = {
+      '114': { total:36, required:17, elective:19, reqCourses:"研究方法(2)、數量分析應用(2)、企業領袖大師專業素養論壇(1+1)⚠️須上滿<b>8次講堂</b>並繳交<b>8次心得</b>、產業專題討論及文獻評析(2)、專題研討(3)、碩士論文(6)", electCourses:"生成式AI應用、創新商務營運模式、資料探勘與分析、國際標準與法規、碳權投資交易、永續管理、AI商務智慧應用、數位品牌與行銷、溫室氣體報告書撰寫、深度學習與程式應用、區塊鏈與金融科技、自然語言處理與輿情分析、物聯網設計應用（各 2 學分）", notes:"每學期最低須選修一門課（除第2學年下學期）", pdfUrl:"https://drive.google.com/file/d/19r-kwADCUkCKG5NrjdlcaDmXN7hQmalq/view" },
+      '113': { total:36, required:17, elective:19, reqCourses:"研究方法(2)、數量分析應用(3)、企業領袖大師專業素養論壇(1+1)、產業專題討論及文獻評析(2)、專題研討(2)、碩士論文(6)", electCourses:"資料探勘與分析(3)、創新商務營運模式(3)、國際標準與法規(2)、碳權投資交易(2)、溫室氣體報告書撰寫(3)、AI商務智慧應用(2)、深度學習與程式應用（英）(3)、永續管理（英）(2)、數位品牌與行銷(2)、自然語言處理與輿情分析(2)、區塊鏈與金融科技（英）(2)、物聯網設計應用(2)", notes:"每學期最低須選修一門課（除第2學年下學期）", pdfUrl:"https://drive.google.com/file/d/13Jv_soMnew_7xWIlEy0T8gI6sYX-bxKb/view" },
+      '112': { total:36, required:17, elective:19, reqCourses:"研究方法(3)、數量分析應用(3)、企業領袖大師專業素養論壇(1)、專題研討(3)、智慧商務專業素養論壇(1)、碩士論文(6)", electCourses:"資料探勘與分析(3)、統計與數據科學(3)、創新商務營運模式(3)、數位科技與企業轉型(3)、創新與智慧財產管理(3)、人工智慧與創新商務科技服務(3)、深度學習與商務智慧分析(3)、數位品牌與社群媒體行銷(3)、永續經營管理(3)、自然語言處理與輿情分析(3)、區塊鏈與金融科技(3)、資通安全管理(3)", notes:"每學期最低須選修一門課（除第2學年下學期）。先修服管所「大數據分析與應用」和「數位行銷專題」可抵免學分", pdfUrl:"https://drive.google.com/file/d/14rVATWh7kwIsvkuPq8QFyWayuc7ohI_K/view" }
+    };
+
+    function applySheetData(data) {
+          if (data.teachers && data.teachers.length > 0) {
+            const db = {};
+            data.teachers.forEach(t => {
+              const name = t['姓名'];
+              if (!name) return;
+              const fallbackTeacher = teacherDB[name] || {};
+              db[name] = {
+                title: t['職稱'] || fallbackTeacher.title || '',
+                office: t['研究室'] || fallbackTeacher.office || '',
+                extension: t['分機'] || fallbackTeacher.extension || '',
+                expertise: t['專長'] || fallbackTeacher.expertise || '',
+                info: `<b>職稱：</b>${t['職稱'] || fallbackTeacher.title || ''}<br><b>研究室:</b> ${t['研究室'] || fallbackTeacher.office || ''} | <b>分機:</b> ${t['分機'] || fallbackTeacher.extension || ''}<br><b>研究專長：</b>${t['專長'] || fallbackTeacher.expertise || ''}`,
+                link: t['連結'] || fallbackTeacher.link || ''
+              };
+            });
+            teacherDB = db;
+            // Auto-add basic aliases for teachers loaded from Sheets
+            Object.keys(db).forEach(name => {
+              teacherAliases[name + '老師'] = name;
+            });
+          }
+          if (data.support && data.support.length > 0) {
+            const db = {};
+            data.support.forEach(t => {
+              const name = t['姓名'];
+              if (!name) return;
+              db[name] = { title: t['職稱'] || '', dept: t['系所'] || '', link: t['連結'] || '' };
+            });
+            supportDB = db;
+          }
+          if (data.credits && data.credits.length > 0) {
+            const db = {};
+            data.credits.forEach(c => {
+              const year = String(c['學年度']);
+              if (!year || year === 'undefined') return;
+              const fallbackPdf = (yearData[year] && yearData[year].pdfUrl) || '';
+              db[year] = {
+                total: c['總學分'],
+                required: c['必修學分'],
+                elective: c['選修學分'],
+                reqCourses: c['必修課程'] || '',
+                electCourses: c['選修課程'] || '',
+                notes: c['備註'] || '',
+                pdfUrl: c['PDF連結'] || fallbackPdf
+              };
+            });
+            if (Object.keys(db).length > 0) yearData = db;
+          }
+    }
+
+    function loadSheetData() {
+      const CACHE_TTL = 60 * 60 * 1000; // 1 小時
+      const cached = sessionStorage.getItem('sheetDataCache');
+      const cachedAt = parseInt(sessionStorage.getItem('sheetDataCacheAt') || '0');
+      if (cached && Date.now() - cachedAt < CACHE_TTL) { try { applySheetData(JSON.parse(cached)); } catch(e) {} return; }
+      fetch(SHEET_API)
+        .then(r => r.json())
+        .then(data => {
+          sessionStorage.setItem('sheetDataCache', JSON.stringify(data));
+          sessionStorage.setItem('sheetDataCacheAt', String(Date.now()));
+          applySheetData(data);
+        })
+        .catch(() => {});
+    }
+
+    function handle(text) {
+      const input = text.toLowerCase();
+      removeOldButtons();
+
+       // 加在這裡（最前面）
+      if (input.includes("你好") || input.includes("您好") || input.includes("hi") || input.includes("hello") || input.includes("哈囉") || input.includes("嗨")) {
+        respondWithTyping(() => {
+        bot("同學您好！😊 很高興為您服務～<br>請問有什麼我可以幫您的嗎？<br>您可以詢問關於<b>老師資訊、學分、論文、研究生流程</b>等問題喔！", showMainMenu);
+  });
+  return;
+}
+
+      // 重來 / 返回主選單
+      if (input.includes("重來") || input.includes("重新") || input.includes("返回") || input.includes("選單") || input.includes("menu") || input.includes("回主選單") || input.includes("主選單")) {
+        respondWithTyping(() => { bot("好的，已回到主選單！請問有什麼我可以幫您的？", showMainMenu); });
+        return;
+      }
+
+      // 檢查是否有老師名字
+      let foundTeacher = null;
+      for (let name in teacherDB) { if (input.includes(name)) { foundTeacher = name; break; } }
+      if (!foundTeacher) { for (let alias in teacherAliases) { if (input.includes(alias)) { foundTeacher = teacherAliases[alias]; break; } } }
+
+      if (foundTeacher) {
+        const t = teacherDB[foundTeacher];
+        if (input.includes("分機") || input.includes("電話")) {
+          respondWithTyping(() => { bot(`📞 ${foundTeacher} 老師的分機：<b>${t.extension}</b>`, showAskOptions); });
+          return;
+        }
+        if (input.includes("辦公室") || input.includes("位置") || input.includes("研究室")) {
+          respondWithTyping(() => { bot(`🏢 ${foundTeacher} 老師的辦公室位置：<b>${t.office}</b>`, showAskOptions); });
+          return;
+        }
+        if (input.includes("專長") || input.includes("研究")) {
+          respondWithTyping(() => { bot(`🎓 ${foundTeacher} 老師的研究專長：<br><b>${t.expertise}</b>`, showAskOptions); });
+          return;
+        }
+        respondWithTyping(() => { showTeacher(foundTeacher); });
+        return;
+      }
+
+      if (fuzzyHas(input, "師資成員") || fuzzyHas(input, "師資") || fuzzyHas(input, "老師")) {
+        respondWithTyping(() => {
+          bot("👨‍🏫 <b>商智所成員查詢：</b><br>請選擇您想查詢的類別：", () => {
+            chat.insertAdjacentHTML('beforeend', `<div class="faculty-menu" style="margin-top:8px;"><span class="option-btn" onclick="showFaculty('fulltime')">專任師資</span><span class="option-btn" onclick="showFaculty('supporting')">支援師資</span><span class="option-btn" onclick="showFaculty('staff')">行政人員</span></div>`);
+            lockInput(); chat.scrollTop = chat.scrollHeight;
+          });
+        }); return;
+      }
+      if (fuzzyHas(input, "研究生專區") || fuzzyHas(input, "階段") || fuzzyHas(input, "指導教授") || fuzzyHas(input, "計畫書") || fuzzyHas(input, "口試") || fuzzyHas(input, "離校") || fuzzyHas(input, "檢查表") || fuzzyHas(input, "延畢") || fuzzyHas(input, "論文進度")) {
+        respondWithTyping(() => {
+          bot("📋 <b>研究生專區</b><br>請選擇您想了解的項目：", () => {
+            chat.insertAdjacentHTML('beforeend', `<div class="faculty-menu" style="margin-top:8px;"><span class="option-btn" onclick="showGradThesis()">📝 論文流程</span><span class="option-btn" onclick="ask('論文格式')">📄 論文格式</span><span class="option-btn" onclick="ask('研究室')">🏠 研究室位置</span><span class="option-btn" onclick="showGradWelfare()">🎁 入學福利</span></div>`);
+            lockInput(); chat.scrollTop = chat.scrollHeight;
+          });
+        }); return;
+      }
+      if (fuzzyHas(input, "研究室")) {
+        respondWithTyping(() => {
+          bot("🏠 <b>研究生研究室</b><br><br>📍 <b>位置：</b>綜合教學大樓 3F E32<br><br>🔑 <b>鑰匙申請：</b>每位研究生可申請一把專屬鑰匙，入學後請洽所辦（2F E28）或傅浩澐秘書（分機 1137）辦理。<br>⏰ 研究室可於在校期間自由進出使用。", () => {
+            chat.insertAdjacentHTML('beforeend', `<div class="option-group" style="margin-top:10px;"><span class="option-btn" onclick="ask('所辦')">📞 所辦聯絡方式</span><span class="option-btn" onclick="showGradWelfare()">🎁 其他入學福利</span><span class="option-btn" onclick="more()">還有問題</span></div>`);
+            lockInput(); chat.scrollTop = chat.scrollHeight;
+          });
+        }); return;
+      }
+      if (fuzzyHas(input, "所辦") || (fuzzyHas(input, "電話") && !foundTeacher) || fuzzyHas(input, "聯絡")) {
+        respondWithTyping(() => {
+          bot("📍 <b>商務智慧與創新研究所 所辦位置與聯絡：</b><br><b>📞 聯絡電話：</b><br>• 致理科技大學主機：(02) 2257-6167<br>• 商智所分機：1137 (傅浩澐秘書)<br><br><b>📍 位置：</b><br>• <b>所辦公室：</b>綜合教學大樓 2F E28", () => {
+            chat.insertAdjacentHTML('beforeend', `<div class="option-group" style="margin-top:10px;"><a href="tel:0222576167" class="call-btn">📞 立即撥打電話</a><span class="option-btn" onclick="showDialingSteps()">📲 教我怎麼撥打</span></div>`);
+            chat.insertAdjacentHTML('beforeend', `<div class="option-group" style="margin-top:10px;"><span class="option-btn" onclick="more()">還有問題</span><span class="option-btn" onclick="confirmClose()">結束並清空</span></div>`);
+            lockInput(); chat.scrollTop = chat.scrollHeight;
+          });
+        }); return;
+      }
+      if (fuzzyHas(input, "學術倫理") || fuzzyHas(input, "倫理")) {
+        respondWithTyping(() => {
+          bot("📖 <b>學術倫理中心 (必修)：</b><br>每位學生皆須完成學術倫理教育課程與測驗。<br>👉 <a href='https://ethics-s.moe.edu.tw/login/s/' target='_blank'>臺灣學術倫理教育資源中心</a>", showAskOptions);
+        }); return;
+      }
+      if (fuzzyHas(input, "參考資源") || fuzzyHas(input, "文獻") || fuzzyHas(input, "找論文")) {
+        respondWithTyping(() => {
+          bot("📚 <b>學術資源導引：</b><br>建議善用以下平台查詢文獻或歷屆論文範本：<br><br><b>📖 論文與論文資料庫：</b><br>• <a href='https://ndltd.ncl.edu.tw/' target='_blank'>臺灣碩博士論文系統</a><br>• <a href='https://www.researchgate.net/' target='_blank'>ResearchGate</a><br>• <a href='https://scholar.google.com/' target='_blank'>Google Scholar</a><br><br><b>📰 期刊與學術文獻：</b><br>• <a href='https://www.jstor.org/' target='_blank'>JSTOR</a><br>• <a href='https://www.ieee.org/' target='_blank'>IEEE Xplore</a><br>• <a href='https://pubmed.ncbi.nlm.nih.gov/' target='_blank'>PubMed</a><br><br><b>💼 商業與管理文獻：</b><br>• <a href='https://www.sciencedirect.com/' target='_blank'>ScienceDirect</a><br>• <a href='https://www.emerald.com/insight/' target='_blank'>Emerald Insight</a><br>• <a href='https://hbr.org/' target='_blank'>Harvard Business Review</a>", showAskOptions);
+        }); return;
+      }
+      if (fuzzyHas(input, "論文") || fuzzyHas(input, "格式")) {
+        respondWithTyping(() => {
+          bot("📝 <b>商智所論文寫作詳細規範：</b><br>🎨 <b>封面：</b>114學年度入學為<b>淺咖啡色</b><br>✒️ <b>字體：</b>中標楷12/英Times 12<br>📏 <b>排版：</b>全文 1.5 倍行距。<br>👉 <a href='https://bi100.chihlee.edu.tw/p/404-1045-126917.php?Lang=zh-tw' target='_blank'>🔗 下載詳細手冊範本連結</a>", () => {
+            chat.insertAdjacentHTML('beforeend', `<div class="option-group" style="margin-top:10px;"><span class="option-btn" onclick="showGradThesis()">📋 查看論文四階段流程</span><span class="option-btn" onclick="more()">還有問題</span><span class="option-btn" onclick="confirmClose()">結束並清空</span></div>`);
+            lockInput(); chat.scrollTop = chat.scrollHeight;
+          });
+        }); return;
+      }
+      if (fuzzyHas(input, "學分") || fuzzyHas(input, "應修") || fuzzyHas(input, "必修") || fuzzyHas(input, "選修") || fuzzyHas(input, "畢業") || fuzzyHas(input, "課程") || fuzzyHas(input, "修幾學分") || fuzzyHas(input, "要修什麼") || fuzzyHas(input, "要修哪些") || fuzzyHas(input, "要修那些")) {
+        respondWithTyping(() => {
+          bot("📚 請問您的入學年度是？", () => {
+            chat.insertAdjacentHTML('beforeend', `<div class="year-menu"><span class="option-btn" onclick="showYearDetail('114')">114學年</span><span class="option-btn" onclick="showYearDetail('113')">113學年</span><span class="option-btn" onclick="showYearDetail('112')">112學年</span></div>`);
+            lockInput(); chat.scrollTop = chat.scrollHeight;
+          });
+        }); return;
+      }
+      // 繳費 / 學費 / 獎學金 / 成績 / 宿舍 / 停車 / 選課系統
+      if (fuzzyHas(input, "繳費") || fuzzyHas(input, "學費") || fuzzyHas(input, "獎學金") || fuzzyHas(input, "成績") || fuzzyHas(input, "宿舍") || fuzzyHas(input, "停車") || fuzzyHas(input, "選課系統") || fuzzyHas(input, "課表") || fuzzyHas(input, "上課時間")) {
+        respondWithTyping(() => {
+          bot("📌 此問題建議您直接聯絡所辦或學校相關單位：<br><br>📞 <b>商智所辦公室</b>：(02) 2257-6167 分機 1137<br>👩‍💼 <b>傅浩澐秘書</b> 將協助您處理<br><br>⏰ <b>服務時間：</b>週一至五 09:00-17:00", () => {
+            chat.insertAdjacentHTML('beforeend', `<div class="option-group" style="margin-top:10px;"><span class="option-btn" onclick="window.open('tel:0222576167','_self')">📞 直接撥打電話</span><span class="option-btn" onclick="more()">還有問題</span><span class="option-btn" onclick="confirmClose()">結束並清空</span></div>`);
+            lockInput(); chat.scrollTop = chat.scrollHeight;
+          });
+        }); return;
+      }
+      // 休學 / 復學
+      if (fuzzyHas(input, "休學") || fuzzyHas(input, "復學")) {
+        respondWithTyping(() => {
+          bot("📋 <b>休學 / 復學申請</b><br><br>📌 <b>休學申請：</b><br>• 申請時機：<b>期末考前一週</b>或寒暑假開學前辦妥<br>• 最長休學年限：<b>2 年</b><br>• 流程：填寫申請書 → 洽所辦（商智所）→ 送教務處核准<br><br>📌 <b>復學申請：</b><br>• 學校會主動寄發復學通知<br>• 若未收到，請在復學學期開學 <b>1 個月前</b>主動申請<br>• 復學年級與休學年級相同<br>• ⚠️ 不得於學期中途復學<br><br>📎 <b>表單下載（教務處 ＞ 註冊組）：</b><br>• <a href='https://aa100.chihlee.edu.tw/var/file/2/1002/img/180059050.pdf' target='_blank'>📄 學生休學申請書 PDF</a><br>• <a href='https://aa100.chihlee.edu.tw/var/file/2/1002/img/407877112.pdf' target='_blank'>📄 學生復學申請書 PDF</a><br><br>👉 <a href='https://aa100.chihlee.edu.tw/p/404-1002-41049.php' target='_blank'>🔗 教務處表單下載頁面</a>", () => {
+            chat.insertAdjacentHTML('beforeend', `<div class="option-group" style="margin-top:10px;"><span class="option-btn" onclick="ask('所辦')">📞 所辦聯絡方式</span><span class="option-btn" onclick="more()">還有問題</span><span class="option-btn" onclick="confirmClose()">結束並清空</span></div>`);
+            lockInput(); chat.scrollTop = chat.scrollHeight;
+          });
+        }); return;
+      }
+      // 行事曆 / 學期時間表
+      if (fuzzyHas(input, "行事曆") || fuzzyHas(input, "時間表") || fuzzyHas(input, "學期行事") || fuzzyHas(input, "開學日") || fuzzyHas(input, "放假") || fuzzyHas(input, "寒假") || fuzzyHas(input, "暑假") || fuzzyHas(input, "期末考") || fuzzyHas(input, "期中考") || fuzzyHas(input, "行事")) {
+        respondWithTyping(() => {
+          bot("📅 <b>學期行事曆</b><br><br>包含開學日、期中 / 期末考、寒暑假、補休假等所有重要日期。<br><br>📎 <b>下載最新行事曆：</b><br>• <a href='https://www.chihlee.edu.tw/var/file/0/1000/img/1224/calendar@20260417.pdf' target='_blank'>📄 115學年度行事曆 PDF</a><br>• <a href='https://www.chihlee.edu.tw/var/file/0/1000/img/1224/calendar@20251223.pdf' target='_blank'>📄 114學年度行事曆 PDF</a><br><br>👉 <a href='https://www.chihlee.edu.tw/p/404-1000-62149.php?Lang=zh-tw' target='_blank'>🔗 查看所有學年度行事曆</a>", () => {
+            chat.insertAdjacentHTML('beforeend', `<div class="option-group" style="margin-top:10px;"><span class="option-btn" onclick="more()">還有問題</span><span class="option-btn" onclick="confirmClose()">結束並清空</span></div>`);
+            lockInput(); chat.scrollTop = chat.scrollHeight;
+          });
+        }); return;
+      }
+      // 老師名字相似比對 → Did you mean?
+      const similarTeacher = findSimilarTeacher(input);
+      if (similarTeacher) {
+        respondWithTyping(() => {
+          bot(`您是不是要查詢 <b>${similarTeacher}</b> 老師的資料呢？😊`, () => {
+            chat.insertAdjacentHTML('beforeend', `<div class="option-group" style="margin-top:8px;"><span class="option-btn" onclick="showTeacher('${similarTeacher}')">✅ 是的</span><span class="option-btn" onclick="more()">❌ 不是，返回選單</span></div>`);
+            lockInput(); chat.scrollTop = chat.scrollHeight;
+          });
+        });
+        return;
+      }
+      // 無法辨識 → 提供電話轉接
+      respondWithTyping(() => {
+        bot("抱歉，我不太確定您的意思 😅<br>💡 請嘗試點選下方按鈕，或輸入關鍵字如「老師」、「論文」、「學分」等<br><br>📞 如需進一步協助，可直接撥打所辦電話：<br><b>(02) 2257-6167 分機 1137</b>", () => {
+          chat.insertAdjacentHTML('beforeend', `<div class="option-group" style="margin-top:10px;"><span class="option-btn" onclick="window.open('tel:0222576167','_self')">📞 直接撥打電話</span></div>`);
+          showMainMenu();
+        });
+      });
+    }
+
+    window.showTeacher = function (name) {
+      removeOldButtons();
+      const t = teacherDB[name];
+      bot(`👨‍🏫 <b>師資資料 - ${name}：</b><br><b>職稱：</b>${t.title}<br><b>研究室：</b>${t.office} ｜ <b>分機：</b>${t.extension}<br><b>研究專長：</b>${t.expertise}`, () => {
+        chat.insertAdjacentHTML('beforeend', `<div class="option-group" style="margin-top:10px;"><span class="option-btn" onclick="window.open(window.FACULTY_PAGE,'_blank')">🔗 查看學校官網師資介紹</span><span class="option-btn" onclick="showTeacherDetail('${name}')">📋 查詢其他資訊</span><span class="option-btn" onclick="more()">還有問題</span><span class="option-btn" onclick="confirmClose()">結束並清空</span></div>`);
+        unlockInput(); chat.scrollTop = chat.scrollHeight;
+      });
+    };
+
+    window.showTeacherDetail = function (name) {
+      removeOldButtons();
+      user(`${name} 老師`);
+      respondWithTyping(() => {
+        const safeName = name.replace(/'/g, '&#39;');
+        bot(`好的！請選擇您想進一步了解的資訊：`, () => {
+          chat.insertAdjacentHTML('beforeend', `<div class="option-group" style="margin-top:10px;"><span class="option-btn" onclick="ask('${safeName} 分機')">📞 分機號碼</span><span class="option-btn" onclick="ask('${safeName} 辦公室')">🏢 辦公室位置</span><span class="option-btn" onclick="ask('${safeName} 專長')">🎓 研究專長</span><span class="option-btn" onclick="more()">返回菜單</span></div>`);
+          unlockInput(); chat.scrollTop = chat.scrollHeight;
+        });
+      });
+    };
+
+    window.showDialingSteps = function () {
+      removeOldButtons();
+      user("教我怎麼撥打");
+      respondWithTyping(() => {
+        bot(`📲 <b>撥打步驟：</b><br><br>1️⃣ <b>從手機或市話打：</b><br>&nbsp;&nbsp;&nbsp;&nbsp;直接撥 <b>(02) 2257-6167</b><br><br>2️⃣ <b>如果要接分機 1137：</b><br>&nbsp;&nbsp;&nbsp;&nbsp;撥號後按 <b>#1137</b> 或等待語音提示<br><br>3️⃣ <b>業務時間：</b><br>&nbsp;&nbsp;&nbsp;&nbsp;週一至五 09:00 - 17:00<br><br>💡 <b>小提示：</b>傅浩澐秘書會協助您處理相關事務喔！`, () => {
+          chat.insertAdjacentHTML('beforeend', `<div class="option-group" style="margin-top:10px;"><a href="tel:0222576167" class="call-btn">📞 立即撥打電話</a><span class="option-btn" onclick="more()">還有問題</span></div>`);
+          unlockInput(); chat.scrollTop = chat.scrollHeight;
+        });
+      });
+    };
+
+    window.showFaculty = function (type) {
+      removeOldButtons();
+      respondWithTyping(() => {
+        if (type === 'fulltime') {
+          bot("👨‍🏫 <b>專任師資：</b><br>請選擇老師查看基本資料：", () => {
+            chat.insertAdjacentHTML('beforeend', `<div class="faculty-menu">` + Object.keys(teacherDB).map(n => `<span class="option-btn" onclick="showTeacher('${n}')">${n}</span>`).join('') + `<span class="option-btn" onclick="more()">↩ 返回</span></div>`);
+            lockInput();
+          });
+        } else if (type === 'supporting') {
+          bot("👨‍🏫 <b>支援師資：</b><br>請選擇老師查看：", () => {
+            chat.insertAdjacentHTML('beforeend', `<div class="faculty-menu">` + Object.keys(supportDB).map(n => `<span class="option-btn" onclick="showSupportingTeacher('${n}')">${n}</span>`).join('') + `<span class="option-btn" onclick="ask('師資成員')">↩ 返回</span></div>`);
+            lockInput();
+          });
+        } else {
+          bot("👩‍💼 <b>行政人員資訊：</b><br>• <b>所秘書：</b>傅浩澐 秘書<br>• 辦公室：2F E28<br>• 分機：1137", showAskOptions);
+        }
+      });
+    };
+
+    window.showSupportingTeacher = function(name) {
+      removeOldButtons();
+      const t = supportDB[name];
+      bot(`👨‍🏫 <b>支援師資 - ${name}：</b><br><b>職稱：</b>${t.title}<br><b>系所：</b>${t.dept}`, () => {
+        chat.insertAdjacentHTML('beforeend', `<div class="option-group" style="margin-top:10px;"><span class="option-btn" onclick="window.open('${t.link}','_blank')">📄 查看詳細資料</span><span class="option-btn" onclick="showFaculty('supporting')">↩ 返回支援師資</span><span class="option-btn" onclick="more()">還有問題</span><span class="option-btn" onclick="confirmClose()">結束並清空</span></div>`);
+        unlockInput(); chat.scrollTop = chat.scrollHeight;
+      });
+    };
+
+    window.showGradThesis = function() {
+      removeOldButtons();
+      user("論文流程");
+      respondWithTyping(() => {
+        bot("📝 <b>碩士論文四階段流程總覽</b><br><br>📌 <b>第一階段｜申請指導教授</b><br>入學後需確認指導教授，完成同意書、論文題目審查表及業界指導教授諮詢紀錄（至少一次）。<br><br>📌 <b>第二階段｜計畫書提報</b><br>完成計畫書初稿後送審查委員審查，依意見修改並取得通過通知後才可進入下一階段。<br><br>📌 <b>第三階段｜學位口試</b><br>論文完稿後申請口試，需邀請至少 <b>3 位委員</b>（含 1 位校外委員），口試通過後依委員意見完成最終修改。<br><br>📌 <b>第四階段｜離校申請</b><br>完成論文上傳、各單位離校簽章，確認無欠費後即可領取畢業證書。<br><br>請選擇想查看詳細表單的階段：", () => {
+          chat.insertAdjacentHTML('beforeend', `<div class="faculty-menu" style="margin-top:8px;"><span class="option-btn" onclick="showStageDetail('1')">📝 第一階段</span><span class="option-btn" onclick="showStageDetail('2')">📄 第二階段</span><span class="option-btn" onclick="showStageDetail('3')">🎓 第三階段</span><span class="option-btn" onclick="showStageDetail('4')">🚪 第四階段</span><span class="option-btn" onclick="showStageDetail('checklist')">✅ 自我檢查表</span><span class="option-btn" onclick="ask('研究生專區')">↩ 返回</span></div>`);
+          lockInput(); chat.scrollTop = chat.scrollHeight;
+        });
+      });
+    };
+
+    window.showGradWelfare = function() {
+      removeOldButtons();
+      user("入學福利");
+      respondWithTyping(() => {
+        bot("🎁 <b>入學福利說明</b><br><br>💻 <b>筆記型電腦（學院提供）</b><br>錄取後學院將提供一台筆記型電腦，供在學期間課業與研究使用。<br>⚠️ 畢業或離校時依規定辦理歸還或相關手續。<br><br>🔑 <b>研究室專屬鑰匙</b><br>每位研究生可申請一把商智所研究生研究室（綜合教學大樓 3F E32）的專屬鑰匙，可在校期間自由進出研究室使用。<br><br>📍 <b>申請方式</b><br>入學後請攜帶學生證親洽所辦（2F E28）辦理。<br>📞 傅浩澐秘書 分機 1137<br>⏰ 服務時間：週一至五 09:00–17:00", () => {
+          chat.insertAdjacentHTML('beforeend', `<div class="option-group" style="margin-top:10px;"><span class="option-btn" onclick="ask('研究生專區')">↩ 返回</span><span class="option-btn" onclick="ask('所辦')">📞 所辦聯絡</span><span class="option-btn" onclick="more()">還有問題</span></div>`);
+          lockInput(); chat.scrollTop = chat.scrollHeight;
+        });
+      });
+    };
+
+    function showAskOptions() {
+      chat.insertAdjacentHTML('beforeend', `<div class="option-group" style="margin-top:10px;"><span class="option-btn" onclick="more()">還有問題</span><span class="option-btn" onclick="confirmClose()">結束並清空</span></div>`);
+      unlockInput(); chat.scrollTop = chat.scrollHeight;
+    }
+
+    window.ask = function (q) { user(q); handle(q); };
+
+    window.openChecklist = function() {
+      user('檢查表');
+      respondWithTyping(() => {
+        bot("📋 <b>論文計畫書與學位考試申請自我檢查表</b><br><br>這份清單能幫你在送出計畫書或申請口試前，逐項確認文件有沒有缺漏，避免因為少交一份表格而退件喔！<br><br>✅ 支援線上打勾確認<br>🖨️ 可列印紙本<br>📄 也有 Word / ODT 版本可下載<br><br>即將為你開啟頁面 ✈️", () => {
+          setTimeout(() => {
+            window.open('https://bi100.chihlee.edu.tw/p/404-1045-127319.php?Lang=zh-tw', '_blank');
+            chat.insertAdjacentHTML('beforeend', `<div class="option-group" style="margin-top:10px;"><span class="option-btn" onclick="showStageDetail('checklist')">📎 查看所有表單下載</span><span class="option-btn" onclick="more()">還有問題</span></div>`);
+            unlockInput(); chat.scrollTop = chat.scrollHeight;
+          }, 1200);
+        });
+      });
+    };
+
+    window.more = function () {
+      removeOldButtons();
+      respondWithTyping(() => { bot("請問還有什麼我可以幫您的？", showMainMenu); });
+    };
+
+    function showMainMenu() {
+      chat.insertAdjacentHTML('beforeend', `<div class="main-menu" style="margin-top:10px;"><span class="option-btn" onclick="ask('師資成員')">👥 師資成員</span><span class="option-btn" onclick="ask('應修科目表')">📚 應修科目表</span><span class="option-btn" onclick="ask('研究生專區')">📋 研究生專區</span><span class="option-btn" onclick="ask('學術倫理')">⚖️ 學術倫理</span><span class="option-btn" onclick="ask('參考資源')">🌐 參考資源</span><span class="option-btn" onclick="ask('行事曆')">📅 行事曆</span><span class="option-btn" onclick="ask('休學')">🏠 休學/復學</span></div>`);
+      unlockInput(); chat.scrollTop = chat.scrollHeight;
+    }
+
+    function getGreeting() {
+      const h = new Date().getHours();
+      if (h >= 6  && h < 12) return '早安同學！☀️';
+      if (h >= 12 && h < 18) return '午安同學！😊';
+      if (h >= 18 && h < 23) return '晚安同學！🌙';
+      return '還在努力嗎？💪';
+    }
+
+    function start() {
+      bot(`${getGreeting()} 我是商智所 AI 助教 🎓<br><br>📌 <b>各學年度畢業總學分均為 <u>36 學分</u></b><br>• 必修：<b>17 學分</b>（含碩士論文 6 學分）<br>• 專業選修：<b>19 學分</b><br><br>⚖️ 全學年度皆須通過<b>學術倫理研習 6 小時</b>及<b>實務專題發表/競賽</b>。<br>如需查詢更多資訊，請點選按鈕或輸入關鍵字。`, showMainMenu);
+
+      // 機器人主動提問（聊天室旁浮動泡泡）
+      const pb = document.getElementById('proactiveBubble');
+      setTimeout(() => {
+        if (chatWindow.classList.contains('standalone-mode') || chatWindow.style.display !== 'flex' || chat.querySelectorAll('.user').length > 0) return;
+        const rect = chatWindow.getBoundingClientRect();
+        if (rect.left < 220) return;
+        // 動態從 teacherDB 取得老師名稱（含 Sheets 載入後的新老師）
+        const teacherBtns = Object.keys(teacherDB).slice(0, 5).map(n => [n, n]);
+        const proactiveQs = [
+          { text: '請問您是幾學年入學的同學呢？😊', btns: [['114學年','114學年應修科目表'],['113學年','113學年應修科目表'],['112學年','112學年應修科目表']] },
+          ...(teacherBtns.length > 0 ? [{ text: '需要查詢老師的資訊嗎？👨‍🏫', btns: teacherBtns }] : []),
+          { text: '對論文或畢業流程有疑問嗎？📋', btns: [['論文格式','論文格式'],['研究生流程','研究生專區'],['學術倫理','學術倫理']] },
+        ];
+        const q = proactiveQs[Math.floor(Math.random() * proactiveQs.length)];
+        pb.innerHTML = `<div style="font-weight:bold;margin-bottom:4px;">💬 ${q.text}</div>`;
+        q.btns.forEach(([label, query], i) => {
+          const btn = document.createElement('div');
+          btn.className = 'pb-btn';
+          btn.textContent = label;
+          btn.style.animationDelay = (i * 0.25 + 0.2) + 's';
+          btn.onclick = () => { pb.style.display = 'none'; ask(query); };
+          pb.appendChild(btn);
+        });
+        pb.style.left = (rect.left - 215 - moveX) + 'px';
+        pb.style.top = (rect.bottom - 165 - moveY) + 'px';
+        pb.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        pb.style.display = 'block';
+        setTimeout(() => { pb.style.display = 'none'; }, 12000);
+      }, 6000);
+    }
+
+  window.showYearDetail = function(year) {
+    removeOldButtons(); user(year + "學年度");
+    const d = yearData[year];
+    if (!d) { bot("查無此學年度資料，請稍後再試。", showAskOptions); return; }
+    const pdfUrl = d.pdfUrl || '';
+    respondWithTyping(() => {
+      bot(`🎓 <b>${year} 學年度畢業門檻：</b><br><br>📌 <b>畢業總學分：${d.total} 學分</b><br>• 必修：${d.required} 學分（含碩士論文 6 學分）<br>• 專業選修：${d.elective} 學分<br><br>📘 <b>必修課程：</b><br>${d.reqCourses}<br><br>📗 <b>選修課程：</b><br>${d.electCourses}<br><br>⚖️ <b>其他畢業條件：</b><br>• 參與學術倫理教育研習 <b>6 小時</b>，取得證書<br>• 畢業前至少參加<b>實務專題發表或競賽</b><br>• ${d.notes}`, () => {
+        if (pdfUrl) {
+          chat.insertAdjacentHTML('beforeend', `<div style="margin-top:10px;"><span class="option-btn" onclick="var w=null;try{w=(window.top||window).open('${pdfUrl}','_blank')}catch(e){}; if(!w){window.top.location.href='${pdfUrl}'}">🔍 查看完整科目表 PDF</span><span style="font-size:11px;color:#999;display:block;margin:4px 6px 0;">若無法開啟，請<span onclick="navigator.clipboard.writeText('${pdfUrl}').then(function(){alert('連結已複製，請貼到新分頁！')})" style="color:#1A237E;cursor:pointer;text-decoration:underline;font-weight:bold;">點此複製連結</span></span></div>`);
+        }
+        showAskOptions();
+      });
+    });
+  };
+
+  window.showStageDetail = function(stage) {
+    removeOldButtons();
+    const B='https://bi100.chihlee.edu.tw/app/index.php?Action=downloadfile&file=';
+    const DL=(f,c)=>B+f+'&cg='+c;
+    const A=(name,url,dl)=>`<a href='${url}' download='${dl}'>${name}</a>`;
+    const s1pdf_agree=DL('WVhSMFlXTm9MemsyTDNCMFlWODVNVGczT0Y4Mk1EazBOemMwWHpJd056STBMbkJrWmc9PQ==','5705'),s1doc_agree=DL('WVhSMFlXTm9MemsyTDNCMFlWODVNVGczTjE4eU1UZzBNek0yWHpJd056QXlMbVJ2WTNnPQ==','5705'),s1pdf_topic=DL('WVhSMFlXTm9MemsyTDNCMFlWODVNRFF5T0Y4M01EZzNPREV5WHpJMU5EQXpMbkJrWmc9PQ==','5705'),s1doc_topic=DL('WVhSMFlXTm9MemsyTDNCMFlWODVNRFF5TjE4eU9UQTNOekV5WHpJMU5EQXpMbVJ2WTNnPQ==','5705'),s1pdf_biz=DL('WVhSMFlXTm9MemsyTDNCMFlWODVNRFF5TWw4MU9ESTBOemcxWHpJMU5EQXpMbkJrWmc9PQ==','5705'),s1doc_biz=DL('WVhSMFlXTm9MemsyTDNCMFlWODVNRFF5TVY4NU1UUXpORGs0WHpJMU5EQXpMbVJ2WTNnPQ==','5705'),s1pdf_fee=DL('WVhSMFlXTm9MemsyTDNCMFlWODVNRFF5Tmw4NE1UY3pOell3WHpJMU5EQXpMbkJrWmc9PQ==','5705'),s1pdf_review=DL('WVhSMFlXTm9MemsyTDNCMFlWODVNRFF4T0Y4NU1ETXpNekExWHpJMU5EQXpMbkJrWmc9PQ==','5705'),s1pdf_change=DL('WVhSMFlXTm9MemsyTDNCMFlWODVNRFF4Tmw4eE16VXpNemc0WHpJMU5EQXpMbkJrWmc9PQ==','5705'),s1pdf_summary=DL('WVhSMFlXTm9MemsyTDNCMFlWODVNRFF5TUY4MU5EQXdNRGsyWHpJMU5EQXpMbkJrWmc9PQ==','5705');
+    const s2pdf_summary=DL('WVhSMFlXTm9MekF2Y0hSaFh6a3dOalk1WHpVeE5qUTBNakZmTmpBNU1ERXVjR1Jt','5706'),s2odt_apply=DL('WVhSMFlXTm9MekF2Y0hSaFh6a3dOamN3WHpFNE16QTNNREJmTmpFd01USXViMlIw','5706'),s2odt_reply=DL('WVhSMFlXTm9MekF2Y0hSaFh6a3dOamN4WHpFek1UazNPVGxmTmpFeE16Z3ViMlIw','5706'),s2pdf_replace=DL('WVhSMFlXTm9MekF2Y0hSaFh6a3dOamN5WHpRM09EY3hOVFJmTmpFeE5qWXVjR1Jt','5706'),s2pdf_change=DL('WVhSMFlXTm9MekF2Y0hSaFh6a3dOamN6WHpFNE1qSTJNREpmTmpFeE56TXVjR1Jt','5706'),s2odt_review=DL('WVhSMFlXTm9MekF2Y0hSaFh6a3hOakEyWHpnek56TTFNRGhmTlRNNE5UWXViMlIw','5706');
+    const s3pdf_apply=DL('WVhSMFlXTm9MekV2Y0hSaFh6a3dNVFEyWHpZek9ESTNOelpmT0RJM01Ea3VjR1Jt','5707'),s3odt_invite=DL('WVhSMFlXTm9MekV2Y0hSaFh6a3dOamMwWHpVMU1UY3hPRjgyTVRNMU9DNXZaSFE9','5707'),s3odt_score=DL('WVhSMFlXTm9MekV2Y0hSaFh6a3dOREk1WHpZeU5ETTFNamhmTWpVMk9URXViMlIw','5707'),s3odt_opinion=DL('WVhSMFlXTm9MekV2Y0hSaFh6a3dORE13WHprNU9EVXpORFpmTWpVMk9URXViMlIw','5707'),s3odt_cert=DL('WVhSMFlXTm9MekV2Y0hSaFh6a3dPVFkxWHpZME5UVTRNRE5mTXpRNU1qa3ViMlIw','5707'),s3odt_grade=DL('WVhSMFlXTm9MekV2Y0hSaFh6a3dNVFE0WHpVek5UYzFOamxmT0RJM01Ea3ViMlIw','5707'),s3odt_venue=DL('WVhSMFlXTm9MekV2Y0hSaFh6a3dNVE0yWHpZME16YzJOelJmT0RJM01Ea3ViMlIw','5707'),s3odt_prof=DL('WVhSMFlXTm9MekV2Y0hSaFh6a3dNVE01WHpVMU1EVTNOekJmT0RJM01Ea3ViMlIw','5707'),s3odt_ext=DL('WVhSMFlXTm9MekV2Y0hSaFh6a3dNVFF4WHprMU1URTRPVEJmT0RJM01Ea3ViMlIw','5707'),s3pdf_summary=DL('WVhSMFlXTm9MekV2Y0hSaFh6a3dNVFF5WHpnME5UWXhNVGhmT0RJM01Ea3VjR1Jt','5707'),s3odt_biz=DL('WVhSMFlXTm9MekV2Y0hSaFh6a3dNVFF6WHpRd09UazBOVFJmT0RJM01Ea3ViMlIw','5707'),s3pdf_cancel=DL('WVhSMFlXTm9MekV2Y0hSaFh6a3dNVFExWHpJNE1URTBNVE5mT0RJM01Ea3VjR1Jt','5707'),s3pdf_delay=DL('WVhSMFlXTm9MekV2Y0hSaFh6a3hORGcwWHprd05URTJORGxmTWpNMU1qa3VjR1Jt','5707'),s3pdf_change=DL('WVhSMFlXTm9MekV2Y0hSaFh6a3dNVFE1WHpNeE16UXlPVGhmT0RJM01Ea3VjR1Jt','5707');
+    const s4pdf_leaveD='https://drive.google.com/file/d/1C8YKbN-3AoHS94TSrlPg66BYMvZY78-1/view?usp=sharing',s4pdf_after=DL('WVhSMFlXTm9Mek12Y0hSaFh6a3dNVFV5WHpJNE1qWXlNVE5mT0RJM05Ua3VjR1Jt','5708'),s4pdf_upload=DL('WVhSMFlXTm9Mek12Y0hSaFh6a3dNVFUwWHpNeU16Z3hNRFZmT0RJM05Ua3VjR1Jt','5708'),s4pdf_logo=DL('WVhSMFlXTm9Mek12Y0hSaFh6a3dNVFV6WHpnMk5UYzFNekpmT0RJM05Ua3VjR1Jt','5708');
+    const sc_docx=DL('WVhSMFlXTm9MelUxTDNCMFlWODVNVGN3TjE4M05qRTRNRE0zWHpNNE9EQXdMbVJ2WTNnPQ==','5782'),sc_odt=DL('WVhSMFlXTm9MelUxTDNCMFlWODVNVGN3T0Y4eE9UZ3pOVFEyWHpNNE9EQTVMbTlrZEE9PQ==','5782');
+    const stageInfo = {
+      '1': { title:'第一階段：申請指導教授同意', desc:'入學後最重要的第一步！你需要找一位願意指導你論文的老師，通常建議在<b>入學第一學期</b>就盡快確定。<br><br>📌 <b>這個階段要做的事：</b><br>① 先跟有興趣的老師約時間聊聊，介紹你的研究方向或興趣<br>② 老師同意後，請老師簽「指導教授同意書」<br>③ 同時確定論文題目，填寫「論文題目審查申請表」<br>④ 還要找一位<b>業界老師</b>進行至少 1 次諮詢，並填寫諮詢紀錄<br><br>⚠️ <b>注意：</b>沒有確定指導教授就無法進入第二階段！', items:`• 📄 碩士學位論文指導教授同意書 ${A('PDF',s1pdf_agree,'碩士學位論文指導教授同意書.pdf')} | ${A('Word',s1doc_agree,'碩士學位論文指導教授同意書.docx')}<br>• 📄 論文題目審查申請表 ${A('PDF',s1pdf_topic,'論文題目審查申請表.pdf')} | ${A('Word',s1doc_topic,'論文題目審查申請表.docx')}<br>• 📄 業界指導教授諮詢紀錄 ${A('PDF',s1pdf_biz,'業界指導教授諮詢紀錄.pdf')} | ${A('Word',s1doc_biz,'業界指導教授諮詢紀錄.docx')}<br>• 📄 碩生計畫書業師諮詢費 ${A('PDF',s1pdf_fee,'碩生計畫書業師諮詢費.pdf')}<br>• 📄 計畫書業界師資審查意見表 ${A('PDF',s1pdf_review,'計畫書業界師資審查意見表.pdf')}<br>• 📄 更換指導教授申請表 ${A('PDF',s1pdf_change,'更換碩士學位論文指導教授申請表.pdf')}<br>• 📄 第一階段申請要點摘要 ${A('PDF',s1pdf_summary,'第一階段申請要點摘要.pdf')}`, url:'https://bi100.chihlee.edu.tw/p/404-1045-126390.php?Lang=zh-tw' },
+      '2': { title:'第二階段：計畫書提報申請', desc:'確定指導教授後，下一步是正式提出你的研究計畫。這個階段是讓老師們確認你的研究方向可行。<br><br>📌 <b>這個階段要做的事：</b><br>① 與指導教授討論並完成論文計畫書初稿（包含研究背景、問題、方法）<br>② 填寫「計畫書審查申請表」，提交給所辦安排審查<br>③ 委員審查後會給意見，依照意見修改計畫書<br>④ 取得「通過」通知後才能進入第三階段<br><br>⚠️ <b>注意：</b>審查可能需要來回修改幾次，要預留充裕時間！', items:`• 📄 計畫書審查申請表 ${A('ODT',s2odt_apply,'計畫書審查申請表.odt')}<br>• 📄 論文計畫書審查表 ${A('ODT',s2odt_review,'論文計畫書審查表.odt')}<br>• 📄 回覆委員意見表 ${A('ODT',s2odt_reply,'回覆委員意見表.odt')}<br>• 📄 碩士學位論文變更申請表 ${A('PDF',s2pdf_change,'碩士學位論文變更申請表.pdf')}<br>• 📄 以「專業實務報告」代替申請書 ${A('PDF',s2pdf_replace,'研究生論文以專業實務報告代替申請書.pdf')}<br>• 📄 第二階段申請要點摘要 ${A('PDF',s2pdf_summary,'第二階段申請要點摘要.pdf')}`, url:'https://bi100.chihlee.edu.tw/p/404-1045-126391.php?Lang=zh-tw' },
+      '3': { title:'第三階段：學位考試申請（口試）', desc:'論文寫完後的最終大關！口試就是向委員們正式發表你的研究成果，通過後就完成學術審查。<br><br>📌 <b>這個階段要做的事：</b><br>① 與指導教授確認論文已完成，填寫「學位考試申請書」<br>② 邀請至少 <b>3 位口試委員</b>（其中 1 位必須是校外委員）<br>③ 準備好論文本，提前寄給每位委員審閱<br>④ 口試當天進行約 60~90 分鐘的發表與問答<br>⑤ 口試通過後，依委員意見完成最終修改，請委員簽署審定書<br><br>⚠️ <b>注意：</b>口試申請通常要提前 <b>1 個月</b>向所辦提出，不要拖到最後一刻！', items:`• 📄 碩士論文學位考試申請書 ${A('PDF',s3pdf_apply,'碩士論文學位考試申請書.pdf')}<br>• 📄 口試委員邀請函格式 ${A('ODT',s3odt_invite,'口試委員邀請函格式.odt')}<br>• 📄 口試學位考試評分表 ${A('ODT',s3odt_score,'口試學位考試評分表.odt')}<br>• 📄 考試委員意見表 ${A('ODT',s3odt_opinion,'考試委員意見表.odt')}<br>• 📄 論文口試委員會審定書 ${A('ODT',s3odt_cert,'論文口試委員會審定書.odt')}<br>• 📄 論文考試成績通知單 ${A('ODT',s3odt_grade,'論文考試成績通知單.odt')}<br>• 📄 口試會場佈置 ${A('ODT',s3odt_venue,'口試會場.odt')}<br>• 📄 指導教授領據 ${A('ODT',s3odt_prof,'指導教授領據.odt')}<br>• 📄 校外委員(含業師)領據 ${A('ODT',s3odt_ext,'校外委員含業師領據.odt')}<br>• 📄 業師審查意見表 ${A('ODT',s3odt_biz,'業師審查意見表.odt')}<br>• 📄 碩士生撤銷學位考試申請書 ${A('PDF',s3pdf_cancel,'碩士生撤銷學位考試申請書.pdf')}<br>• 📄 變更學位考試申請書 ${A('PDF',s3pdf_change,'變更學位考試申請書.pdf')}<br>• 📄 學位論文延後公開申請書 ${A('PDF',s3pdf_delay,'學位論文延後公開申請書.pdf')}<br>• 📄 第三階段申請要點摘要 ${A('PDF',s3pdf_summary,'第三階段申請要點摘要.pdf')}`, url:'https://bi100.chihlee.edu.tw/p/404-1045-126392.php?Lang=zh-tw' },
+      '4': { title:'第四階段：離校申請', desc:'恭喜！口試通過後最後一關，完成離校手續就可以正式拿到碩士學位證書了 🎓<br><br>📌 <b>這個階段要做的事：</b><br>① 將最終版論文上傳到<b>臺灣博碩士論文知識加值系統</b>（國家圖書館）<br>② 到各單位（圖書館、財務、所辦等）逐一辦理離校簽章<br>③ 確認無欠費、無借書未還等情況<br>④ 填寫離校手續申請單，交回所辦<br>⑤ 完成所有流程後即可領取<b>畢業證書</b><br><br>⚠️ <b>注意：</b>論文上傳格式有規定，請先看上傳說明文件再操作！', items:`• 📄 離校手續申請單_日碩 <a href='${s4pdf_leaveD}' target='_blank'>PDF</a><br>• 📄 口試後至離校前的作業流程 ${A('PDF',s4pdf_after,'口試後至離校前的作業.pdf')}<br>• 📄 博碩士論文系統上傳說明 ${A('PDF',s4pdf_upload,'博碩士論文系統上傳說明.pdf')}<br>• 📄 校徽圓形 ${A('PDF',s4pdf_logo,'校徽圓形.pdf')}`, url:'https://bi100.chihlee.edu.tw/p/404-1045-126394.php?Lang=zh-tw' },
+      'checklist': { title:'論文計畫書與學位考試申請自我檢查表', desc:'提交計畫書或申請口試前，請先用此表逐項自我檢查，確保文件齊全不遺漏。', items:`• 📱 <a href='https://bi100.chihlee.edu.tw/p/404-1045-127319.php?Lang=zh-tw' target='_blank' style='color:#1A237E;font-weight:bold;'>開啟線上互動檢查表</a>（可線上打勾、支援列印）<br>• 📄 下載表單：${A('Word',sc_docx,'論文計畫書與學位考試申請自我檢查表.docx')} | ${A('ODT',sc_odt,'論文計畫書與學位考試申請自我檢查表.odt')}`, url:'https://bi100.chihlee.edu.tw/p/404-1045-127319.php?Lang=zh-tw' }
+    };
+    const s = stageInfo[stage];
+    user(s.title);
+    respondWithTyping(() => {
+      let navBtns = '';
+      if (stage !== 'checklist') { const n=parseInt(stage); if(n<4) navBtns+=`<span class="option-btn" onclick="showStageDetail('${n+1}')">➡️ 下一階段</span>`; if(n>1) navBtns+=`<span class="option-btn" onclick="showStageDetail('${n-1}')">⬅️ 上一階段</span>`; }
+      navBtns += `<span class="option-btn" onclick="ask('研究生專區')">📋 回研究生專區</span><span class="option-btn" onclick="more()">還有問題</span>`;
+      bot(`📋 <b>${s.title}</b><br><br>💡 <b>說明：</b>${s.desc}<br><br>📎 <b>需要的表單：</b><br>${s.items}<br><br>👉 <a href='${s.url}' target='_blank'>🔗 前往下載所有表單 PDF</a>`, () => {
+        chat.insertAdjacentHTML('beforeend', `<div class="option-group" style="margin-top:10px;">${navBtns}</div>`);
+        lockInput(); chat.scrollTop = chat.scrollHeight;
+      });
+    });
+  };
+
+  window.send = function () {
+    if (isProcessing) return;
+    let t = msgInput.value.trim();
+    if (!t) return;
+    user(t);
+    msgInput.value = "";
+    document.getElementById('charCount').textContent = '0/500';
+    handle(t);
+  };
+
+  msgInput.addEventListener("keypress", (e) => { if (e.key === "Enter") send(); });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && chatWindow.style.display === "flex") {
+      msgInput.value = "";
+      document.getElementById('charCount').textContent = '0/500';
+      msgInput.focus();
+    }
+  });
+
+  // 複製訊息
+  window.copyMsg = function(el) {
+    navigator.clipboard.writeText(el.innerText.replace('🤖 ', '')).catch(() => {});
+    el.style.outline = '2px solid #22C55E';
+    setTimeout(() => el.style.outline = '', 800);
+  };
+
+  // 重新開始
+  window.restartChat = function() {
+    isProcessing = false;
+    chat.innerHTML = '';
+    msgInput.value = '';
+    document.getElementById('charCount').textContent = '0/500';
+    unlockInput();
+    start();
+  };
+
+  // 字元計數
+  msgInput.addEventListener('input', () => {
+    document.getElementById('charCount').textContent = msgInput.value.length + '/500';
+  });
+
+  // === 表情選擇器 ===
+  const emojis = ['😊','😂','🥰','😎','🤔','👍','👋','🙏','❤️','🎉','📝','📚','🎓','💡','✅','❌','🔥','👀','😅','🤝'];
+  const emojiPicker = document.getElementById('emojiPicker');
+  emojiPicker.innerHTML = emojis.map(e => `<span class="emoji-item" onclick="insertEmoji('${e}')">${e}</span>`).join('');
+
+  window.toggleEmojiPicker = function() {
+    if (emojiPicker.style.display === 'flex') { emojiPicker.style.display = 'none'; return; }
+    const btn = document.getElementById('emojiBtn');
+    const rect = btn.getBoundingClientRect();
+    emojiPicker.style.left = rect.left + 'px';
+    emojiPicker.style.top = 'auto';
+    emojiPicker.style.bottom = (window.innerHeight - rect.top + 8) + 'px';
+    emojiPicker.style.display = 'flex';
+  };
+
+  window.insertEmoji = function(emoji) {
+    const pos = msgInput.selectionStart != null ? msgInput.selectionStart : msgInput.value.length;
+    msgInput.value = msgInput.value.slice(0, pos) + emoji + msgInput.value.slice(pos);
+    msgInput.focus();
+    msgInput.selectionStart = msgInput.selectionEnd = pos + emoji.length;
+    document.getElementById('charCount').textContent = msgInput.value.length + '/500';
+    emojiPicker.style.display = 'none';
+  };
+
+  // 讓動態產生的 option-btn 支援鍵盤 Tab + Enter
+  chat.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.target.classList.contains('option-btn')) {
+      e.target.click();
+    }
+  });
+  // 讓新插入的 option-btn 自動帶 tabindex
+  new MutationObserver(() => {
+    chat.querySelectorAll('.option-btn:not([tabindex])').forEach(el => el.setAttribute('tabindex', '0'));
+  }).observe(chat, { childList: true, subtree: true });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#emojiPicker') && e.target.id !== 'emojiBtn') {
+      emojiPicker.style.display = 'none';
+    }
+  });
+
+  // === 語音輸入 ===
+  let recognition = null;
+  let isRecording = false;
+
+  window.toggleVoice = function() {
+    const micBtn = document.getElementById('micBtn');
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) return;
+    if (isRecording) { recognition.stop(); return; }
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SR();
+    recognition.lang = 'zh-TW';
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    const MIC_SVG_NORMAL = `<svg width="15" height="17" viewBox="0 0 15 17" fill="none"><rect x="4.5" y="0.5" width="6" height="8.5" rx="3" fill="#1A237E"/><path d="M1.5 8C1.5 11.038 4.186 13.5 7.5 13.5C10.814 13.5 13.5 11.038 13.5 8" stroke="#1A237E" stroke-width="1.5" stroke-linecap="round"/><line x1="7.5" y1="13.5" x2="7.5" y2="16" stroke="#1A237E" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="16" x2="10" y2="16" stroke="#1A237E" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+    const MIC_SVG_REC = `<svg width="15" height="17" viewBox="0 0 15 17" fill="none"><rect x="4.5" y="0.5" width="6" height="8.5" rx="3" fill="#ef4444"/><path d="M1.5 8C1.5 11.038 4.186 13.5 7.5 13.5C10.814 13.5 13.5 11.038 13.5 8" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round"/><line x1="7.5" y1="13.5" x2="7.5" y2="16" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="16" x2="10" y2="16" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round"/><circle cx="12.5" cy="2.5" r="2" fill="#ef4444"/></svg>`;
+    recognition.onstart = () => {
+      isRecording = true;
+      micBtn.classList.add('recording');
+      micBtn.innerHTML = MIC_SVG_REC;
+      micBtn.title = '錄音中，點擊停止';
+    };
+    recognition.onresult = (e) => {
+      const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
+      msgInput.value = transcript;
+      document.getElementById('charCount').textContent = transcript.length + '/500';
+    };
+    recognition.onend = () => {
+      isRecording = false;
+      micBtn.classList.remove('recording');
+      micBtn.innerHTML = MIC_SVG_NORMAL;
+      micBtn.title = '語音輸入';
+      msgInput.focus();
+    };
+    recognition.onerror = () => {
+      isRecording = false;
+      micBtn.classList.remove('recording');
+      micBtn.innerHTML = MIC_SVG_NORMAL;
+      micBtn.title = '語音輸入';
+    };
+    recognition.start();
+  };
+
+  // 浮動「最新訊息」按鈕
+  const scrollBtn = document.getElementById('scrollBtn');
+  chat.addEventListener('scroll', () => {
+    const atLatest = chat.scrollTop >= chat.scrollHeight - chat.clientHeight - 50;
+    if (atLatest) { scrollBtn.style.display = 'none'; return; }
+    const rect = chatWindow.getBoundingClientRect();
+    scrollBtn.style.left = (rect.left + rect.width / 2) + 'px';
+    scrollBtn.style.top = (rect.bottom - 145) + 'px';
+    scrollBtn.style.display = 'block';
+  });
+  scrollBtn.onclick = () => { chat.scrollTop = chat.scrollHeight; scrollBtn.style.display = 'none'; };
+
+  // 暴露給外部（側欄注入用）
+  window.openChatWindow = openChatWindow;
+  window._chatStart = start;
+
+  loadSheetData();
+
+  // 不支援語音的瀏覽器隱藏麥克風按鈕
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    document.getElementById('micBtn').style.display = 'none';
+  }
+
+  // 只在「客服機器人」獨立頁面才自動嵌入開啟（判斷網址含特定 ID）
+  const _isStandalone = window.location.href.includes('404-1045-128712') || window.location.href.includes('localhost') || window.location.protocol === 'file:' || window.location.href.includes('github.io');
+  if (_isStandalone) {
+    chatToggle.style.display = 'none';
+    guideBubble.style.display = 'none';
+    sessionStorage.setItem('hasSeenGuide', 'true');
+    chatToggle.classList.add('chat-open');
+    chatWindow.classList.add('standalone-mode');
+    chatWindow.style.display = 'flex';
+    chatWindow.classList.remove('chat-closing');
+    void chatWindow.offsetWidth;
+    chatWindow.classList.add('chat-entrance');
+    chatWindow.addEventListener('animationend', () => {
+      chatWindow.classList.remove('chat-entrance');
+    }, { once: true });
+    start();
+  }
+
+});
+
+</script>
+
+<script>
+// 在學校網站側欄「聯絡我們」後注入「機器人代理」入口，不修改原始頁面 HTML
+(function () {
+  function findContactItem() {
+    return Array.from(document.querySelectorAll('a, li, td, div, span, p')).find(function (el) {
+      var t = el.childNodes;
+      for (var i = 0; i < t.length; i++) {
+        if (t[i].nodeType === 3 && t[i].textContent.trim() === '聯絡我們') return true;
+      }
+      return el.children.length === 0 && el.textContent.trim() === '聯絡我們';
+    });
+  }
+
+  function inject() {
+    if (document.getElementById('__robot-nav-item__')) return true;
+    var target = findContactItem();
+    if (!target) return false;
+
+    var item = target.cloneNode(true);
+    item.id = '__robot-nav-item__';
+    item.style.cursor = 'pointer';
+
+    // 清除複製過來的連結行為
+    item.querySelectorAll('a').forEach(function (a) {
+      a.removeAttribute('href');
+      a.onclick = function (e) { e.preventDefault(); };
+    });
+
+    // 替換文字節點為「機器人代理」
+    (function setText(node) {
+      for (var i = 0; i < node.childNodes.length; i++) {
+        var n = node.childNodes[i];
+        if (n.nodeType === 3 && n.textContent.trim()) {
+          n.textContent = n.textContent.replace('聯絡我們', '機器人代理');
+          return true;
+        }
+        if (setText(n)) return true;
+      }
+      return false;
+    })(item);
+
+    item.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (typeof window.openChatWindow === 'function') {
+        window.openChatWindow();
+        var chat = document.getElementById('chat');
+        var msgInput = document.getElementById('msg');
+        if (msgInput) msgInput.focus();
+        if (chat && chat.innerHTML.trim() === '' && typeof window._chatStart === 'function') {
+          window._chatStart();
+        }
+      }
+    });
+
+    target.insertAdjacentElement('afterend', item);
+    return true;
+  }
+
+  if (!inject()) {
+    var obs = new MutationObserver(function () { if (inject()) obs.disconnect(); });
+    obs.observe(document.documentElement, { childList: true, subtree: true });
+    var t = setInterval(function () { if (inject()) clearInterval(t); }, 400);
+    setTimeout(function () { clearInterval(t); obs.disconnect(); }, 12000);
+  }
+})();
+</script>
+  <!-- chatbot widget end -->
+</section>
+
+<footer>
+  &copy; 2025 致理科技大學 商務智慧與創新研究所 &nbsp;|&nbsp; AI 助教由商智所同學開發維護
+</footer>
+
+</body>
+</html>
